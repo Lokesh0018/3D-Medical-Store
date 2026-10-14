@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { STORE } from '../data/store.js'
 import Icon from './Icon.jsx'
@@ -16,12 +16,23 @@ export default function Header() {
   const { count, setOpen } = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [onLight, setOnLight] = useState(false)
+  const { pathname } = useLocation()
 
+  // Track scroll state and whether the header currently sits over a light
+  // section, so it can switch to a light, high-contrast variant there.
   useEffect(() => {
     let frame = 0
     const onScroll = () => {
       cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => setScrolled(window.scrollY > 24))
+      frame = requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 24)
+        const probe = 36 // ~ middle of the header bar
+        setOnLight(Array.from(document.querySelectorAll('.section--light')).some((el) => {
+          const r = el.getBoundingClientRect()
+          return r.top <= probe && r.bottom >= probe
+        }))
+      })
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -29,7 +40,7 @@ export default function Header() {
       cancelAnimationFrame(frame)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [])
+  }, [pathname])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -41,7 +52,7 @@ export default function Header() {
   const close = () => setMenuOpen(false)
 
   return (
-    <header className={`site-header${scrolled || menuOpen ? ' is-solid' : ''}`}>
+    <header className={`site-header${scrolled || menuOpen ? ' is-solid' : ''}${onLight && !menuOpen ? ' is-light' : ''}`}>
       <a className="skip-link" href="#main">Skip to content</a>
       <div className="site-header__inner container">
         <Link to="/" className="brand" onClick={close} aria-label={`${STORE.name} home`}>
@@ -71,6 +82,15 @@ export default function Header() {
         </nav>
 
         <div className="site-header__actions">
+          <Link
+            to="/products"
+            state={{ focusSearch: true }}
+            className="header-icon-button"
+            aria-label="Search products"
+            onClick={close}
+          >
+            <Icon name="search" size={20} />
+          </Link>
           <button
             type="button"
             className="cart-button"

@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import ParticleSection from '../particles/ParticleSection.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import Icon from '../components/Icon.jsx'
 import { CATEGORIES, PRODUCTS, categoryName } from '../data/products.js'
+import { prescriptionLink } from '../data/store.js'
 import usePageTitle from '../hooks/usePageTitle.js'
 import './Products.css'
 
@@ -13,6 +14,12 @@ export default function Products() {
   // Local state keeps typing instant; the URL mirrors it for shareable links.
   const [query, setQuery] = useState(() => params.get('q') ?? '')
   usePageTitle(category === 'all' ? 'Products' : categoryName(category))
+  const searchRef = useRef(null)
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.state?.focusSearch) searchRef.current?.focus()
+  }, [location.state, location.key])
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -36,12 +43,16 @@ export default function Products() {
         <div className="container">
           <p className="eyebrow">Shop</p>
           <h1 id="products-title" className="page-hero__title">Medicines &amp; health essentials</h1>
-          <p className="page-hero__lead">Search the catalogue, add items to your cart and send your order on WhatsApp or by phone.</p>
+          <p className="page-hero__lead">
+            Search the catalogue, add items to your cart and send your order on WhatsApp or by phone.
+            Have a prescription? <a href={prescriptionLink()} target="_blank" rel="noopener noreferrer">Send us a photo</a>.
+          </p>
 
           <form className="catalog-search" role="search" onSubmit={(e) => e.preventDefault()}>
             <label htmlFor="product-search" className="sr-only">Search products</label>
             <Icon name="search" size={18} />
             <input
+              ref={searchRef}
               id="product-search"
               type="search"
               placeholder="Search by product name…"

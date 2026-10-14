@@ -89,7 +89,9 @@
   align-items: center;
   gap: 8px;
 }
+.header-icon-button { text-decoration: none; }
 
+.header-icon-button,
 .cart-button,
 .menu-toggle {
   position: relative;
@@ -115,7 +117,31 @@
   display: grid;
   place-items: center;
 }
+.header-icon-button:hover,
+.cart-button:hover,
+.menu-toggle:hover { background: rgba(255, 255, 255, 0.1); }
 .menu-toggle { display: none; }
+
+/* Light variant while the bar sits over a light (product / form) section. */
+.site-header.is-light {
+  background: rgba(242, 247, 251, 0.88);
+  border-bottom-color: var(--line);
+}
+.site-header.is-light .brand { color: var(--ink); }
+.site-header.is-light .brand__mark { color: var(--teal-ink); border-color: rgba(6, 122, 116, 0.35); }
+.site-header.is-light .site-nav a { color: var(--ink-2); }
+.site-header.is-light .site-nav a:hover { color: var(--ink); background: rgba(11, 27, 46, 0.06); }
+.site-header.is-light .site-nav a.active { color: var(--teal-ink); background: rgba(6, 122, 116, 0.1); }
+.site-header.is-light .site-nav__call { color: var(--ink) !important; border-color: var(--line); }
+.site-header.is-light .header-icon-button,
+.site-header.is-light .cart-button,
+.site-header.is-light .menu-toggle {
+  color: var(--ink);
+  border-color: var(--line);
+  background: #fff;
+}
+.site-header.is-light .cart-button__badge { background: var(--teal-ink); color: #fff; }
+.site-header.is-light :focus-visible { outline-color: var(--teal-ink); }
 
 @media (max-width: 900px) {
   .menu-toggle { display: inline-grid; }
@@ -146,6 +172,11 @@
   .site-nav ul { flex-direction: column; }
   .site-nav a { width: 100%; font-size: 1.05rem; }
   .site-nav__call { justify-content: center; }
+}
+
+@media (max-width: 767px) {
+  .site-header .cart-button { display: none; }
+  .site-header__inner { gap: 12px; }
 }
 
 @media (max-width: 380px) {

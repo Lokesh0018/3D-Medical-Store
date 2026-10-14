@@ -44,6 +44,9 @@ export const PARTICLE_CONFIG = {
     stagger: 0.4,
     // How far (world units) particles drift outward mid-transition.
     scatter: 1.5,
+    // Opacity reduction (0..1) at the midpoint of a morph, so particles in
+    // flight across headings and buttons stay in the background.
+    flightDim: 0.45,
     // Extra Y twist (radians) applied at the midpoint of each morph.
     twist: 0.9,
     // Exponential damping rate used to scrub toward the scroll target.
@@ -98,7 +101,7 @@ export const SECTION_PRESETS = {
   },
   services: {
     shape: 'heartbeat', x: 0, y: 0.06, scale: 0.85, opacity: 0.65, sway: 0.12, palette: 'pulse',
-    mobile: { y: 0.3, scale: 0.46, opacity: 0.45 },
+    mobile: { y: 0.08, scale: 0.46, opacity: 0.6 },
   },
   order: {
     shape: 'capsule', x: 0.22, y: 0, scale: 0.8, opacity: 0.95, sway: 0.4, palette: 'cyan',

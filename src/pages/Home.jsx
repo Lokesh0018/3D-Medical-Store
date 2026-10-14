@@ -1,13 +1,53 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import ParticleSection from '../particles/ParticleSection.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import Icon from '../components/Icon.jsx'
 import { CATEGORIES, PRODUCTS } from '../data/products.js'
-import { SERVICES, STORE, whatsappLink } from '../data/store.js'
+import { SERVICES, STORE, prescriptionLink, whatsappLink } from '../data/store.js'
 import usePageTitle from '../hooks/usePageTitle.js'
 import './Home.css'
 
 const featured = PRODUCTS.filter((p) => p.featured).slice(0, 6)
+const POPULAR_SEARCHES = ['Paracetamol', 'ORS', 'Thermometer', 'Vitamin C']
+
+/** Search-first hero entry: most visitors arrive looking for one item. */
+function HeroSearch() {
+  const navigate = useNavigate()
+  const [q, setQ] = useState('')
+  const go = (term) => navigate(term.trim() ? `/products?q=${encodeURIComponent(term.trim())}` : '/products')
+
+  return (
+    <div className="hero-search">
+      <form
+        className="hero-search__form"
+        role="search"
+        onSubmit={(e) => {
+          e.preventDefault()
+          go(q)
+        }}
+      >
+        <label htmlFor="hero-search" className="sr-only">Search medicines and health products</label>
+        <Icon name="search" size={20} className="hero-search__icon" />
+        <input
+          id="hero-search"
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search medicines, devices, baby care…"
+          autoComplete="off"
+        />
+        <button type="submit" className="btn btn--primary">Search</button>
+      </form>
+      <p className="hero-search__popular">
+        <span>Popular:</span>
+        {POPULAR_SEARCHES.map((term) => (
+          <Link key={term} to={`/products?q=${encodeURIComponent(term)}`}>{term}</Link>
+        ))}
+      </p>
+    </div>
+  )
+}
 
 export default function Home() {
   usePageTitle()
@@ -26,13 +66,14 @@ export default function Home() {
               Order prescription and everyday health essentials from {STORE.name}. Every order is checked by our
               pharmacist before it is packed.
             </p>
+            <HeroSearch />
             <div className="hero__ctas">
-              <Link to="/products" className="btn btn--primary btn--lg">
-                Browse products <Icon name="arrow" size={18} />
-              </Link>
-              <a className="btn btn--glass btn--lg" href={whatsappLink('Hello, I would like to order medicines.')} target="_blank" rel="noopener noreferrer">
-                <Icon name="whatsapp" size={18} /> Order on WhatsApp
+              <a className="btn btn--glass btn--lg" href={prescriptionLink()} target="_blank" rel="noopener noreferrer">
+                <Icon name="rx" size={18} /> Upload prescription
               </a>
+              <Link to="/products" className="btn btn--ghost btn--lg">
+                Browse all products <Icon name="arrow" size={18} />
+              </Link>
             </div>
             <ul className="hero__facts">
               <li><Icon name="clock" size={16} /> {STORE.hours[0].days}: {STORE.hours[0].time}</li>
@@ -133,6 +174,9 @@ export default function Home() {
             <div className="hero__ctas">
               <a className="btn btn--primary" href={whatsappLink('Hello, I would like to place an order.')} target="_blank" rel="noopener noreferrer">
                 <Icon name="whatsapp" size={18} /> Start on WhatsApp
+              </a>
+              <a className="btn btn--glass" href={prescriptionLink()} target="_blank" rel="noopener noreferrer">
+                <Icon name="rx" size={18} /> Upload prescription
               </a>
               <a className="btn btn--glass" href={STORE.phoneHref}>
                 <Icon name="phone" size={18} /> {STORE.phoneDisplay}

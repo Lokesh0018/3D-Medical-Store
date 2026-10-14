@@ -34,6 +34,11 @@ export function whatsappLink(message = '') {
   return `https://wa.me/${STORE.whatsappNumber}${text}`
 }
 
+/** WhatsApp chat prefilled for sending a prescription photo. */
+export function prescriptionLink() {
+  return whatsappLink(`Hello ${STORE.name}, I'd like to order the medicines on my prescription. I'm attaching a photo of it here.`)
+}
+
 export const SERVICES = [
   {
     id: 'prescriptions',

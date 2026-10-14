@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { formatPrice } from '../data/products.js'
@@ -25,6 +25,11 @@ function orderMessage(lines, total, hasRx) {
 export default function CartDrawer() {
   const { lines, total, hasRx, open, setOpen, setQty, clear } = useCart()
   const ref = useRef(null)
+  const [status, setStatus] = useState('')
+  const changeQty = (product, qty) => {
+    setQty(product.id, qty)
+    setStatus(qty > 0 ? `${product.name}: quantity ${qty}` : `${product.name} removed from cart`)
+  }
 
   useEffect(() => {
     const dialog = ref.current
@@ -44,6 +49,7 @@ export default function CartDrawer() {
       <div className="cart-drawer__panel">
         <div className="cart-drawer__head">
           <h2 id="cart-title">Your cart</h2>
+          <p className="sr-only" role="status">{status}</p>
           <button type="button" className="icon-button" onClick={() => setOpen(false)} aria-label="Close cart">
             <Icon name="close" />
           </button>
@@ -67,11 +73,11 @@ export default function CartDrawer() {
                     <p className="cart-line__pack">{product.pack} · {formatPrice(product.price)}</p>
                   </div>
                   <div className="qty" role="group" aria-label={`Quantity of ${product.name}`}>
-                    <button type="button" onClick={() => setQty(product.id, qty - 1)} aria-label="Decrease quantity">
+                    <button type="button" onClick={() => changeQty(product, qty - 1)} aria-label={`Decrease quantity of ${product.name}`}>
                       <Icon name="minus" size={16} />
                     </button>
-                    <span aria-live="polite">{qty}</span>
-                    <button type="button" onClick={() => setQty(product.id, qty + 1)} aria-label="Increase quantity">
+                    <span>{qty}</span>
+                    <button type="button" onClick={() => changeQty(product, qty + 1)} aria-label={`Increase quantity of ${product.name}`}>
                       <Icon name="plus" size={16} />
                     </button>
                   </div>

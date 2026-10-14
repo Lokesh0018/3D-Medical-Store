@@ -2,6 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import CartDrawer from './components/CartDrawer.jsx'
+import MobileActionBar from './components/MobileActionBar.jsx'
 import ScrollManager from './components/ScrollManager.jsx'
 import ParticleExperience from './particles/ParticleExperience.jsx'
 import Home from './pages/Home.jsx'
@@ -28,6 +29,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <MobileActionBar />
         <CartDrawer />
       </div>
     </>

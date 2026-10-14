@@ -173,7 +173,8 @@ export class ParticleSystem {
     u.uColorA.value.lerpColors(ca.a, cb.a, e)
     u.uColorB.value.lerpColors(ca.b, cb.b, e)
     u.uAccent.value.lerpColors(ca.accent, cb.accent, e)
-    u.uOpacity.value = MathUtils.lerp(A.opacity, B.opacity, e) * this.fade.v
+    const flight = Math.sin(Math.PI * p)
+    u.uOpacity.value = MathUtils.lerp(A.opacity, B.opacity, e) * this.fade.v * (1 - transition.flightDim * flight)
     u.uProgress.value = p
     u.uTime.value = this.time
     u.uStagger.value = transition.stagger

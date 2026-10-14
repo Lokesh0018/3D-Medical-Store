@@ -64,7 +64,7 @@ ul, ol { margin: 0; padding: 0; }
 address { font-style: normal; }
 
 :focus-visible {
-  outline: 2px solid var(--cyan);
+  outline: 3px solid var(--cyan);
   outline-offset: 3px;
   border-radius: 6px;
 }
