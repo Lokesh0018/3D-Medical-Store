@@ -4,9 +4,9 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'dist-ssr'] },
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,mjs}'],
     languageOptions: {
       ecmaVersion: 'latest',
       globals: globals.browser,
@@ -21,7 +21,12 @@ export default [
     },
   },
   {
-    files: ['vite.config.js', 'eslint.config.js'],
+    // Build-time server entry, not a hot-reloaded component module.
+    files: ['src/entry-server.jsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
+  {
+    files: ['vite.config.js', 'eslint.config.js', 'scripts/**/*.mjs'],
     languageOptions: { globals: globals.node },
   },
 ]

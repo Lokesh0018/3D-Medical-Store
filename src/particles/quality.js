@@ -11,6 +11,7 @@ export function prefersReducedMotion() {
 let webglSupport
 export function supportsWebGL() {
   if (webglSupport !== undefined) return webglSupport
+  if (typeof document === 'undefined') return false
   try {
     const canvas = document.createElement('canvas')
     const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
@@ -20,6 +21,16 @@ export function supportsWebGL() {
     webglSupport = false
   }
   return webglSupport
+}
+
+/**
+ * Respect Data Saver / very slow connections: the 3D chunk is ~290 KB gzipped
+ * and purely decorative, so those visitors get the static visual instead.
+ */
+export function prefersLightweight() {
+  if (typeof navigator === 'undefined') return false
+  const c = navigator.connection
+  return !!(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType ?? '')))
 }
 
 /**

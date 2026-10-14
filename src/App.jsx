@@ -7,11 +7,14 @@ import ScrollManager from './components/ScrollManager.jsx'
 import ParticleExperience from './particles/ParticleExperience.jsx'
 import Home from './pages/Home.jsx'
 import Products from './pages/Products.jsx'
+import ProductDetail from './pages/ProductDetail.jsx'
+import usePageMeta from './hooks/usePageMeta.js'
 import Contact from './pages/Contact.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 export default function App() {
   const { pathname } = useLocation()
+  usePageMeta()
 
   return (
     <>
@@ -24,6 +27,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

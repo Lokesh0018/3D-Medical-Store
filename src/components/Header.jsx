@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { STORE } from '../data/store.js'
 import Icon from './Icon.jsx'
+import SearchModal from './SearchModal.jsx'
 import './Header.css'
 
 const NAV = [
@@ -15,6 +16,7 @@ const NAV = [
 export default function Header() {
   const { count, setOpen } = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onLight, setOnLight] = useState(false)
   const { pathname } = useLocation()
@@ -42,9 +44,15 @@ export default function Header() {
     }
   }, [pathname])
 
+  // Cmd+K or Ctrl+K opens quick search modal
   useEffect(() => {
-    if (!menuOpen) return
-    const onKey = (e) => e.key === 'Escape' && setMenuOpen(false)
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setSearchOpen((prev) => !prev)
+      }
+      if (e.key === 'Escape' && menuOpen) setMenuOpen(false)
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [menuOpen])
@@ -52,66 +60,70 @@ export default function Header() {
   const close = () => setMenuOpen(false)
 
   return (
-    <header className={`site-header${scrolled || menuOpen ? ' is-solid' : ''}${onLight && !menuOpen ? ' is-light' : ''}`}>
-      <a className="skip-link" href="#main">Skip to content</a>
-      <div className="site-header__inner container">
-        <Link to="/" className="brand" onClick={close} aria-label={`${STORE.name} home`}>
-          <span className="brand__mark"><Icon name="cross" size={18} strokeWidth={2} /></span>
-          <span className="brand__name">{STORE.name}</span>
-        </Link>
-
-        <nav
-          id="site-nav"
-          className={`site-nav${menuOpen ? ' is-open' : ''}`}
-          aria-label="Main"
-        >
-          <ul>
-            {NAV.map((item) => (
-              <li key={item.label}>
-                {item.hash ? (
-                  <Link to={item.to} onClick={close}>{item.label}</Link>
-                ) : (
-                  <NavLink to={item.to} end={item.end} onClick={close}>{item.label}</NavLink>
-                )}
-              </li>
-            ))}
-          </ul>
-          <a className="site-nav__call" href={STORE.phoneHref}>
-            <Icon name="phone" size={16} /> {STORE.phoneDisplay}
-          </a>
-        </nav>
-
-        <div className="site-header__actions">
-          <Link
-            to="/products"
-            state={{ focusSearch: true }}
-            className="header-icon-button"
-            aria-label="Search products"
-            onClick={close}
-          >
-            <Icon name="search" size={20} />
+    <>
+      <header className={`site-header${scrolled || menuOpen ? ' is-solid' : ''}${onLight && !menuOpen ? ' is-light' : ''}`}>
+        <a className="skip-link" href="#main">Skip to content</a>
+        <div className="site-header__inner container">
+          <Link to="/" className="brand" onClick={close} aria-label={`${STORE.name} home`}>
+            <span className="brand__mark"><Icon name="cross" size={18} strokeWidth={2} /></span>
+            <span className="brand__name">{STORE.name}</span>
           </Link>
-          <button
-            type="button"
-            className="cart-button"
-            onClick={() => setOpen(true)}
-            aria-label={`Open cart, ${count} ${count === 1 ? 'item' : 'items'}`}
+
+          <nav
+            id="site-nav"
+            className={`site-nav${menuOpen ? ' is-open' : ''}`}
+            aria-label="Main"
           >
-            <Icon name="cart" size={20} />
-            {count > 0 && <span className="cart-button__badge" aria-hidden="true">{count}</span>}
-          </button>
-          <button
-            type="button"
-            className="menu-toggle"
-            aria-expanded={menuOpen}
-            aria-controls="site-nav"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            onClick={() => setMenuOpen((o) => !o)}
-          >
-            <Icon name={menuOpen ? 'close' : 'menu'} size={22} />
-          </button>
+            <ul>
+              {NAV.map((item) => (
+                <li key={item.label}>
+                  {item.hash ? (
+                    <Link to={item.to} onClick={close}>{item.label}</Link>
+                  ) : (
+                    <NavLink to={item.to} end={item.end} onClick={close}>{item.label}</NavLink>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <a className="site-nav__call" href={STORE.phoneHref}>
+              <Icon name="phone" size={16} /> {STORE.phoneDisplay}
+            </a>
+          </nav>
+
+          <div className="site-header__actions">
+            <button
+              type="button"
+              className="header-icon-button"
+              aria-label="Open search modal (Ctrl+K)"
+              onClick={() => setSearchOpen(true)}
+              title="Search medicines (Ctrl+K)"
+            >
+              <Icon name="search" size={20} />
+            </button>
+            <button
+              type="button"
+              className="cart-button"
+              onClick={() => setOpen(true)}
+              aria-label={`Open cart, ${count} ${count === 1 ? 'item' : 'items'}`}
+            >
+              <Icon name="cart" size={20} />
+              {count > 0 && <span className="cart-button__badge" aria-hidden="true">{count}</span>}
+            </button>
+            <button
+              type="button"
+              className="menu-toggle"
+              aria-expanded={menuOpen}
+              aria-controls="site-nav"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMenuOpen((o) => !o)}
+            >
+              <Icon name={menuOpen ? 'close' : 'menu'} size={22} />
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   )
 }

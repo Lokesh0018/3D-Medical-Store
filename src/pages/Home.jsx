@@ -2,10 +2,15 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ParticleSection from '../particles/ParticleSection.jsx'
 import ProductCard from '../components/ProductCard.jsx'
+import QuickViewModal from '../components/QuickViewModal.jsx'
+import PrescriptionModal from '../components/PrescriptionModal.jsx'
 import Icon from '../components/Icon.jsx'
 import { CATEGORIES, PRODUCTS } from '../data/products.js'
-import { SERVICES, STORE, prescriptionLink, whatsappLink } from '../data/store.js'
-import usePageTitle from '../hooks/usePageTitle.js'
+import { SERVICES, STORE, hoursText, prescriptionLink, whatsappLink } from '../data/store.js'
+import TrustStrip from '../components/TrustStrip.jsx'
+import OpenStatus from '../components/OpenStatus.jsx'
+import StructuredData from '../components/StructuredData.jsx'
+import { pharmacySchema } from '../seo/structuredData.js'
 import './Home.css'
 
 const featured = PRODUCTS.filter((p) => p.featured).slice(0, 6)
@@ -50,7 +55,8 @@ function HeroSearch() {
 }
 
 export default function Home() {
-  usePageTitle()
+  const [quickProduct, setQuickProduct] = useState(null)
+  const [rxModalOpen, setRxModalOpen] = useState(false)
 
   return (
     <>
@@ -68,21 +74,28 @@ export default function Home() {
             </p>
             <HeroSearch />
             <div className="hero__ctas">
-              <a className="btn btn--glass btn--lg" href={prescriptionLink()} target="_blank" rel="noopener noreferrer">
+              <button
+                type="button"
+                className="btn btn--glass btn--lg"
+                onClick={() => setRxModalOpen(true)}
+              >
                 <Icon name="rx" size={18} /> Upload prescription
-              </a>
+              </button>
               <Link to="/products" className="btn btn--ghost btn--lg">
                 Browse all products <Icon name="arrow" size={18} />
               </Link>
             </div>
             <ul className="hero__facts">
-              <li><Icon name="clock" size={16} /> {STORE.hours[0].days}: {STORE.hours[0].time}</li>
+              <li><OpenStatus /></li>
+              <li><Icon name="clock" size={16} /> {STORE.hours[0].label}: {hoursText(STORE.hours[0])}</li>
               <li><Icon name="delivery" size={16} /> Home delivery {STORE.delivery.radius}</li>
-              <li><Icon name="rx" size={16} /> Prescriptions via WhatsApp</li>
+              <li><Icon name="rx" size={16} /> In-app prescription review</li>
             </ul>
           </div>
         </div>
       </ParticleSection>
+
+      <TrustStrip />
 
       {/* About — particles become a DNA helix */}
       <ParticleSection preset="about" id="about" className="split section--dark" aria-labelledby="about-title">
@@ -94,6 +107,17 @@ export default function Home() {
               {STORE.name} stocks medicines, wellness products and personal care essentials for families nearby.
               Ask us anything about your medicines — we are here to help you take them safely.
             </p>
+            {STORE.photos.storefront && (
+              <img
+                className="split__photo"
+                src={STORE.photos.storefront.src}
+                width={STORE.photos.storefront.width}
+                height={STORE.photos.storefront.height}
+                alt={STORE.photos.storefront.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
             <ul className="check-list">
               <li><Icon name="shield" size={20} /> Medicines sourced from authorised distributors</li>
               <li><Icon name="check" size={20} /> Prescriptions checked by a registered pharmacist</li>
@@ -135,7 +159,13 @@ export default function Home() {
             <Link to="/products" className="btn btn--outline">View all products <Icon name="arrow" size={16} /></Link>
           </div>
           <div className="product-grid">
-            {featured.map((p) => <ProductCard key={p.id} product={p} />)}
+            {featured.map((p) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                onQuickView={(prod) => setQuickProduct(prod)}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -175,16 +205,36 @@ export default function Home() {
               <a className="btn btn--primary" href={whatsappLink('Hello, I would like to place an order.')} target="_blank" rel="noopener noreferrer">
                 <Icon name="whatsapp" size={18} /> Start on WhatsApp
               </a>
-              <a className="btn btn--glass" href={prescriptionLink()} target="_blank" rel="noopener noreferrer">
+              <button
+                type="button"
+                className="btn btn--glass"
+                onClick={() => setRxModalOpen(true)}
+              >
                 <Icon name="rx" size={18} /> Upload prescription
-              </a>
+              </button>
               <a className="btn btn--glass" href={STORE.phoneHref}>
                 <Icon name="phone" size={18} /> {STORE.phoneDisplay}
               </a>
             </div>
+            <p className="split__note">
+              Questions about prescriptions, delivery or payment? <Link to="/contact#faq">Read the FAQ</Link>
+            </p>
           </div>
         </div>
       </ParticleSection>
+      <StructuredData data={pharmacySchema()} />
+
+      {quickProduct && (
+        <QuickViewModal
+          product={quickProduct}
+          onClose={() => setQuickProduct(null)}
+        />
+      )}
+
+      <PrescriptionModal
+        isOpen={rxModalOpen}
+        onClose={() => setRxModalOpen(false)}
+      />
     </>
   )
 }

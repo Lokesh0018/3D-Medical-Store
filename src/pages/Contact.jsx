@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import ParticleSection from '../particles/ParticleSection.jsx'
 import Icon from '../components/Icon.jsx'
-import { STORE, whatsappLink } from '../data/store.js'
-import usePageTitle from '../hooks/usePageTitle.js'
+import { STORE, directionsLink, hoursText, whatsappLink } from '../data/store.js'
+import OpenStatus from '../components/OpenStatus.jsx'
+import Faq from '../components/Faq.jsx'
 import './Contact.css'
 
 const EMPTY = { name: '', phone: '', message: '' }
@@ -16,7 +17,6 @@ function validate(values) {
 }
 
 export default function Contact() {
-  usePageTitle('Contact & ordering')
   const [values, setValues] = useState(EMPTY)
   const [errors, setErrors] = useState({})
   const [sent, setSent] = useState(false)
@@ -66,6 +66,7 @@ export default function Contact() {
               <Icon name="pin" size={22} />
               <h2>Visit</h2>
               <address>{STORE.address.map((l) => <span key={l}>{l}</span>)}</address>
+              <a href={directionsLink()} target="_blank" rel="noopener noreferrer">Get directions</a>
             </li>
           </ul>
         </div>
@@ -119,13 +120,30 @@ export default function Contact() {
 
           <aside className="contact-hours" aria-labelledby="hours-title">
             <h2 id="hours-title" className="section-title section-title--ink">Opening hours</h2>
+            <OpenStatus className="contact-hours__status" />
             <dl>
               {STORE.hours.map((h) => (
-                <div key={h.days}><dt>{h.days}</dt><dd>{h.time}</dd></div>
+                <div key={h.label}><dt>{h.label}</dt><dd>{hoursText(h)}</dd></div>
               ))}
             </dl>
             <p className="contact-hours__note"><Icon name="delivery" size={18} /> Home delivery {STORE.delivery.radius}. {STORE.delivery.note}</p>
+            <p className="contact-hours__note"><Icon name="card" size={18} /> We accept {STORE.payments.join(', ')}.</p>
+            {STORE.mapEmbedUrl && (
+              <iframe
+                className="contact-map"
+                src={STORE.mapEmbedUrl}
+                title={`Map showing ${STORE.name}`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            )}
+            <a className="btn btn--outline contact-hours__directions" href={directionsLink()} target="_blank" rel="noopener noreferrer">
+              <Icon name="pin" size={18} /> Get directions
+            </a>
           </aside>
+        </div>
+        <div className="container contact-faq">
+          <Faq />
         </div>
       </section>
     </>

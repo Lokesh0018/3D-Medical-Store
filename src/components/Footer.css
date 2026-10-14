@@ -18,6 +18,29 @@
 }
 .site-footer__licence { font-size: 0.85rem; }
 
+.site-footer__trust-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+.footer-trust-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #a7f3d0;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  width: fit-content;
+}
+.footer-trust-tag svg {
+  color: #34d399;
+}
+
 .site-footer__heading {
   font-size: 0.8rem;
   text-transform: uppercase;

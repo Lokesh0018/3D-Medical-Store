@@ -119,6 +119,10 @@ export const SECTION_PRESETS = {
     shape: 'heartbeat', x: 0.05, y: -0.06, scale: 0.72, opacity: 0.65, sway: 0.12, palette: 'pulse',
     mobile: { y: 0.32, scale: 0.42, opacity: 0.4 },
   },
+  productDetail: {
+    shape: 'molecule', x: 0.3, y: 0.02, scale: 0.6, opacity: 0.85, sway: 0.4, palette: 'teal',
+    mobile: { x: 0.22, y: 0.1, scale: 0.4, opacity: 0.3 },
+  },
   notFound: {
     shape: 'sphere', x: 0, y: 0.02, scale: 1.1, opacity: 0.45, sway: 0.6, palette: 'blue',
     mobile: { scale: 0.6, opacity: 0.5 },

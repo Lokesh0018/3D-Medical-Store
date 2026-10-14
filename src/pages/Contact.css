@@ -58,6 +58,17 @@
   padding: 28px;
 }
 .contact-hours dl { display: grid; gap: 12px; margin: 0; }
+.contact-hours__status { margin: -4px 0 18px; }
+.contact-hours__directions { margin-top: 20px; }
+.contact-map {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.contact-faq { margin-top: clamp(56px, 8vw, 96px); max-width: 860px; }
 .contact-hours dl div {
   display: flex;
   justify-content: space-between;

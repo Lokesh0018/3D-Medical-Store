@@ -1,0 +1,223 @@
+.search-modal {
+  margin: 10vh auto auto auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  width: min(640px, 94vw);
+  box-shadow: 0 25px 50px -12px rgba(6, 24, 44, 0.4);
+  overflow: hidden;
+}
+
+.search-modal::backdrop {
+  background: rgba(4, 12, 24, 0.65);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.search-modal__panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-modal__top {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+.search-modal__icon {
+  color: var(--teal-ink);
+  flex-shrink: 0;
+}
+
+.search-modal__input {
+  flex: 1;
+  border: 0;
+  font-size: 1.05rem;
+  color: var(--ink);
+  background: transparent;
+  outline: none;
+}
+.search-modal__input::placeholder {
+  color: #94a3b8;
+}
+
+.search-modal__close-btn {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 4px;
+}
+.kbd-shortcut {
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.search-modal__results {
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.search-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.search-result-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+.search-result-item:hover,
+.search-result-item:focus-visible {
+  background: #f8fafc;
+  outline: none;
+}
+
+.search-result-item__art {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.search-result-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-item__name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.search-result-item__name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-item__pack {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-2);
+}
+
+.search-result-item__salt {
+  display: block;
+  font-size: 0.75rem;
+  color: #0f766e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-item__price {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.search-modal__no-results {
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--ink-2);
+}
+.search-modal__suggestions {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+.search-modal__suggestions span {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.search-modal__hints {
+  padding: 20px;
+}
+.search-modal__section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+  margin-bottom: 12px;
+}
+.search-modal__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip--sm {
+  min-height: 32px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: var(--ink);
+}
+.chip--sm:hover {
+  background: #e2e8f0;
+  color: var(--ink);
+}
+
+.search-modal__tip {
+  margin-top: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #0f766e;
+}
+.search-modal__tip svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.search-modal__foot {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #f8fafc;
+  border-top: 1px solid var(--line);
+  font-size: 0.75rem;
+  color: #64748b;
+}
+.search-modal__foot kbd {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: inherit;
+  font-weight: 600;
+}

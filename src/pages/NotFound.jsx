@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom'
 import ParticleSection from '../particles/ParticleSection.jsx'
-import usePageTitle from '../hooks/usePageTitle.js'
 
 export default function NotFound() {
-  usePageTitle('Page not found')
   return (
     <ParticleSection preset="notFound" className="page-hero page-hero--center section--dark" aria-labelledby="nf-title">
       <div className="container">

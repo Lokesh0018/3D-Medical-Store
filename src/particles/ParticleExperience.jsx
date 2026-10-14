@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { prefersReducedMotion, supportsWebGL } from './quality.js'
+import { prefersLightweight, prefersReducedMotion, supportsWebGL } from './quality.js'
 import ParticleFallback from './ParticleFallback.jsx'
 import ParticleErrorBoundary from './ParticleErrorBoundary.jsx'
 import './particles.css'
@@ -17,7 +17,6 @@ const ParticleCanvas = lazy(() => import('./ParticleCanvas.jsx'))
  */
 export default function ParticleExperience({ routeKey }) {
   const [reduced, setReduced] = useState(prefersReducedMotion)
-  const [webgl] = useState(supportsWebGL)
   const [idle, setIdle] = useState(false)
   const [ready, setReady] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -30,16 +29,17 @@ export default function ParticleExperience({ routeKey }) {
   }, [])
 
   useEffect(() => {
-    if (reduced || !webgl) return
+    // Capability checks run client-side only (also keeps SSR output stable).
+    if (reduced || !supportsWebGL() || prefersLightweight()) return
     if ('requestIdleCallback' in window) {
       const id = window.requestIdleCallback(() => setIdle(true), { timeout: 1500 })
       return () => window.cancelIdleCallback(id)
     }
     const id = setTimeout(() => setIdle(true), 300)
     return () => clearTimeout(id)
-  }, [reduced, webgl])
+  }, [reduced])
 
-  const enabled = !reduced && webgl && !failed
+  const enabled = !reduced && !failed
   const showCanvas = enabled && idle
 
   return (

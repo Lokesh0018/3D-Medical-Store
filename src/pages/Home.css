@@ -3,6 +3,8 @@
   min-height: 100vh;
   min-height: 100svh;
   display: grid;
+  /* minmax(0, 1fr): never let min-content widths widen the page on phones. */
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   padding-top: calc(var(--header-h) + 32px);
   padding-bottom: 48px;
@@ -97,6 +99,7 @@
   min-height: 92vh;
   min-height: 92svh;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   padding-block: clamp(80px, 10vw, 140px);
 }
@@ -106,6 +109,15 @@
 .split__copy.glass-panel { padding: clamp(24px, 4vw, 44px); }
 .split__copy--wide { max-width: 680px; }
 .split__copy > p { color: var(--muted); }
+.split__photo {
+  width: 100%;
+  height: auto;
+  margin-top: 24px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+}
+.split__note { margin-top: 22px; font-size: 0.95rem; }
+.split__note a { color: var(--cyan); font-weight: 600; }
 
 .check-list {
   list-style: none;

@@ -1,41 +1,21 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore } from 'react'
 import { PRODUCTS } from '../data/products.js'
+import { cartStore } from './cartStore.js'
 
 const CartContext = createContext(null)
-const STORAGE_KEY = 'carepoint-cart'
-
-function loadCart() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}')
-    // Drop ids that are no longer in the catalogue.
-    return Object.fromEntries(
-      Object.entries(raw).filter(([id, qty]) => PRODUCTS.some((p) => p.id === id) && qty > 0),
-    )
-  } catch {
-    return {}
-  }
-}
 
 export function CartProvider({ children }) {
-  const [items, setItems] = useState(loadCart)
+  const items = useSyncExternalStore(cartStore.subscribe, cartStore.getSnapshot, cartStore.getServerSnapshot)
   const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-    } catch {
-      /* storage unavailable (private mode) — cart still works for the session */
-    }
-  }, [items])
-
-  const add = useCallback((id) => setItems((s) => ({ ...s, [id]: (s[id] ?? 0) + 1 })), [])
-  const setQty = useCallback((id, qty) => setItems((s) => {
+  const add = useCallback((id) => cartStore.update((s) => ({ ...s, [id]: (s[id] ?? 0) + 1 })), [])
+  const setQty = useCallback((id, qty) => cartStore.update((s) => {
     const next = { ...s }
     if (qty <= 0) delete next[id]
     else next[id] = Math.min(qty, 20)
     return next
   }), [])
-  const clear = useCallback(() => setItems({}), [])
+  const clear = useCallback(() => cartStore.update(() => ({})), [])
 
   const value = useMemo(() => {
     const lines = Object.entries(items)

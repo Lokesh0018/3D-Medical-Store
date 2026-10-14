@@ -24,7 +24,13 @@ const PATHS = {
   check: 'M5 12l5 5 9-10',
   shield: 'M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z M9 12l2 2 4-4',
   plus: 'M12 5v14M5 12h14',
+  card: 'M3 6h18v12H3zM3 10h18M7 15h4',
   minus: 'M5 12h14',
+  sparkles: 'M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8zM19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9zM5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9z',
+  filter: 'M4 6h16M7 12h10M10 18h4',
+  upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12',
+  info: 'M12 16v-4M12 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
+  sort: 'M3 8h12M3 12h8M3 16h4M17 14l3 3 3-3M20 7v10',
 }
 
 export default function Icon({ name, size = 20, title, className, strokeWidth = 1.8 }) {

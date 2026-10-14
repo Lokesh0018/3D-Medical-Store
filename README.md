@@ -7,14 +7,28 @@ Vite + React 19 medical store with a scroll-driven, GPU-morphed particle layer
 npm install
 npm run dev      # http://localhost:5173
 npm run lint
-npm run build
+npm run build    # client build + server render + pre-render of every route
+npm run preview  # serve dist/ (pre-rendered HTML, hydrated on load)
 ```
 
+`npm run build` pre-renders `/`, `/products`, `/contact` and every
+`/products/:id` to `dist/<route>/index.html`, plus `404.html`,
+`sitemap.xml` and `robots.txt` (see `scripts/prerender.mjs`). Deploy `dist/`
+to any static host; configure unknown paths to serve `404.html`.
+
 ## ⚠️ Placeholders to replace before launch
-- `src/data/store.js` — store name, phone/WhatsApp, email, address, hours, licence no., delivery terms
-- `src/data/products.js` — sample catalogue (names, packs, prices, stock, Rx flags)
-- `index.html` — canonical URL / Open Graph tags (TODO comment)
-- Page copy in `src/pages/*` is starter text — review all claims
+- `src/data/store.js` — name, `siteUrl`, phone/WhatsApp, email, address
+  (+ `addressParts`), hours, licence no., pharmacist, payments, delivery terms,
+  returns policy, FAQ answers. Then set **`isPlaceholder: false`** to enable
+  schema.org JSON-LD (Pharmacy, Product, FAQPage).
+- `src/data/products.js` — sample catalogue (names, packs, `price` ≤ `mrp`,
+  stock, Rx flags). Optional per product: `image: { src, width, height, alt }`
+  and `description`.
+- Photos: put files in `public/images/` and set `STORE.photos.storefront` and
+  product `image` fields — they replace the icon illustrations automatically.
+- Map: paste a Google Maps embed URL into `STORE.mapEmbedUrl` (optional).
+- `POPULAR_SEARCHES` in `src/pages/Home.jsx` — match your best sellers.
+- Page copy in `src/pages/*` is starter text — review all claims.
 
 ## Particle system (`src/particles/`)
 | File | Role |

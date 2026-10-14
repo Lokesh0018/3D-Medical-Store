@@ -25,8 +25,8 @@
   --radius: 18px;
   --radius-lg: 32px;
   --header-h: 72px;
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-head: 'Manrope', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-head: 'Manrope Variable', 'Inter Variable', system-ui, sans-serif;
   color-scheme: dark;
 }
 
@@ -263,7 +263,7 @@ address { font-style: normal; }
   font-size: clamp(1rem, 1.4vw, 1.15rem);
   max-width: 52ch;
 }
-.page-hero--center { min-height: 80svh; display: grid; align-items: center; text-align: center; }
+.page-hero--center { min-height: 80svh; display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; text-align: center; }
 .page-hero--center .page-hero__title,
 .page-hero--center .page-hero__lead { margin-inline: auto; }
 
