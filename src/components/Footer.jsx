@@ -100,6 +100,11 @@ export default function Footer() {
           </button>
         </div>
       </div>
+
+      {/* Aesthetic brand watermark across footer background */}
+      <div className="site-footer__watermark" aria-hidden="true">
+        <span>{STORE.name}</span>
+      </div>
     </footer>
   )
 }

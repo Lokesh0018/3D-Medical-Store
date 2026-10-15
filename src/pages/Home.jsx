@@ -250,73 +250,37 @@ export default function Home() {
                 role="region"
                 aria-label="Popular Categories"
               >
-                <div className="hero-marquee__track" role="group" aria-label="Quick category filters">
+                <div className="hero-marquee__track" aria-hidden="true">
                   {/* First set */}
                   <div className="hero-marquee__group">
-                    <button
-                      type="button"
-                      className="quick-pill quick-pill--medicines"
-                      onClick={() => handleCategorySelect('medicines')}
-                    >
+                    <span className="quick-pill quick-pill--medicines">
                       <Icon name="pill" size={14} /> <span>Medicines</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="quick-pill quick-pill--wellness"
-                      onClick={() => handleCategorySelect('wellness')}
-                    >
+                    </span>
+                    <span className="quick-pill quick-pill--wellness">
                       <Icon name="leaf" size={14} /> <span>Daily Vitamins</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="quick-pill quick-pill--devices"
-                      onClick={() => handleCategorySelect('devices')}
-                    >
+                    </span>
+                    <span className="quick-pill quick-pill--devices">
                       <Icon name="device" size={14} /> <span>Health Devices</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="quick-pill quick-pill--baby"
-                      onClick={() => handleCategorySelect('baby-care')}
-                    >
+                    </span>
+                    <span className="quick-pill quick-pill--baby">
                       <Icon name="baby" size={14} /> <span>Baby Care</span>
-                    </button>
+                    </span>
                   </div>
 
                   {/* Duplicate set for seamless infinite loop */}
-                  <div className="hero-marquee__group" aria-hidden="true">
-                    <button
-                      type="button"
-                      tabIndex={-1}
-                      className="quick-pill quick-pill--medicines"
-                      onClick={() => handleCategorySelect('medicines')}
-                    >
+                  <div className="hero-marquee__group">
+                    <span className="quick-pill quick-pill--medicines">
                       <Icon name="pill" size={14} /> <span>Medicines</span>
-                    </button>
-                    <button
-                      type="button"
-                      tabIndex={-1}
-                      className="quick-pill quick-pill--wellness"
-                      onClick={() => handleCategorySelect('wellness')}
-                    >
+                    </span>
+                    <span className="quick-pill quick-pill--wellness">
                       <Icon name="leaf" size={14} /> <span>Daily Vitamins</span>
-                    </button>
-                    <button
-                      type="button"
-                      tabIndex={-1}
-                      className="quick-pill quick-pill--devices"
-                      onClick={() => handleCategorySelect('devices')}
-                    >
+                    </span>
+                    <span className="quick-pill quick-pill--devices">
                       <Icon name="device" size={14} /> <span>Health Devices</span>
-                    </button>
-                    <button
-                      type="button"
-                      tabIndex={-1}
-                      className="quick-pill quick-pill--baby"
-                      onClick={() => handleCategorySelect('baby-care')}
-                    >
+                    </span>
+                    <span className="quick-pill quick-pill--baby">
                       <Icon name="baby" size={14} /> <span>Baby Care</span>
-                    </button>
+                    </span>
                   </div>
                 </div>
               </div>
