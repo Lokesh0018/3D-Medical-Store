@@ -66,7 +66,10 @@ export class ParticleSystem {
     this.time = 0
     this.intro = { v: 0 }
     this.fade = { v: 0 }
-    this.settle = { v: 0 } // 1 → particles spread slightly beyond their rest pose
+    // First-load assembly: v = 1 → particles spread around the shape, 0 → at
+    // rest. Advanced by rendered-frame time (not wall clock) so it starts on
+    // the first frame actually drawn, however long shader compilation takes.
+    this.settle = { v: 0, t: 0, active: false }
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 }
     // Hover ripple state. nx/ny are NDC (y up); last* is the previous spawn.
     // px/py trail the cursor so displaced particles drift back rather than snap.
@@ -83,6 +86,7 @@ export class ParticleSystem {
       this.intro.v = 1
       this.fade.v = 1
       this.settle.v = 0
+      this.settle.active = false
     }
   }
 
@@ -97,6 +101,17 @@ export class ParticleSystem {
   /** The cursor left the window: let the hover field fade out. */
   clearPointer() {
     this.hover.inside = false
+  }
+
+  /** First-load assembly: converge (ease-out cubic) and fade in, per frame. */
+  #advanceSettle(delta) {
+    const st = this.settle
+    if (!st.active) return
+    st.t += delta
+    const k = Math.min(st.t / transition.settleDuration, 1)
+    st.v = (1 - k) ** 3
+    this.fade.v = Math.min(st.t / (transition.settleDuration * 0.4), 1)
+    if (k >= 1) st.active = false
   }
 
   /** Emit ripple rings as the cursor travels, and ease the hover field. */
@@ -137,11 +152,15 @@ export class ParticleSystem {
       return
     }
     if (settle) {
-      // First page load: draw the shape already formed and let it settle in.
+      // First page load: particles assemble straight into the shape (fade and
+      // convergence both run from the first drawn frame; see #advanceSettle).
       this.intro.v = 1
       this.s = 1 + startIndex
       this.settle.v = 1
-      gsap.to(this.settle, { v: 0, duration: transition.settleDuration, ease: 'power3.out' })
+      this.settle.t = 0
+      this.settle.active = true
+      this.fade.v = 0
+      return
     } else if (intro) {
       this.intro.v = 0
       this.s = 0
@@ -230,6 +249,7 @@ export class ParticleSystem {
     u.uSizeScale.value = MathUtils.clamp(Math.sqrt(scale), 0.55, 1.05)
 
     if (!this.still) this.time += delta
+    this.#advanceSettle(delta)
     const pt = this.pointer
     if (this.still) {
       pt.tx = 0

@@ -389,24 +389,61 @@ export default function Home() {
       {/* Categories — particles form a molecule */}
       <ParticleSection preset="categories" id="categories" className="split section--dark" aria-labelledby="cat-title">
         <div className="container split__inner">
-          <div className="split__copy split__copy--wide">
-            <p className="eyebrow">Shop by category</p>
-            <h2 id="cat-title" className="section-title">Everything for everyday health</h2>
-            <ul className="category-grid">
-              {CATEGORIES.map((c) => (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    onClick={() => handleCategorySelect(c.id)}
-                    className="category-card"
-                  >
-                    <span className="category-card__icon"><Icon name={c.icon} size={22} /></span>
-                    <span className="category-card__name">{c.name}</span>
-                    <span className="category-card__blurb">{c.blurb}</span>
-                  </button>
-                </li>
-              ))}
+          <div className="split__copy split__copy--wide category-showcase">
+            <div className="category-showcase__header">
+              <span className="eyebrow"><span className="eyebrow__dot" aria-hidden="true" />Shop by category</span>
+              <h2 id="cat-title" className="section-title">
+                Everything for <span className="text-gradient">everyday health</span>
+              </h2>
+              <p className="category-showcase__sub">
+                Explore pharmacy-grade formulations, daily wellness essentials, and clinical care kits curated by licensed pharmacists.
+              </p>
+            </div>
+
+            <ul className="category-grid" role="list">
+              {CATEGORIES.map((c) => {
+                const count = PRODUCTS.filter((p) => p.category === c.id).length
+                const isActive = category === c.id
+                return (
+                  <li key={c.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleCategorySelect(c.id)}
+                      className={`category-card category-card--${c.id}${isActive ? ' is-active' : ''}`}
+                      aria-pressed={isActive}
+                    >
+                      <div className="category-card__visual">
+                        <span className="category-card__icon" aria-hidden="true">
+                          <Icon name={c.icon} size={22} strokeWidth={2} />
+                        </span>
+                        <span className="category-card__count">{count} {count === 1 ? 'item' : 'items'}</span>
+                      </div>
+                      <div className="category-card__content">
+                        <span className="category-card__name">{c.name}</span>
+                        <span className="category-card__blurb">{c.blurb}</span>
+                      </div>
+                      <span className="category-card__arrow" aria-hidden="true">
+                        <Icon name="arrow" size={15} />
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
+
+            <div className="category-showcase__footer">
+              <button
+                type="button"
+                className="btn btn--outline"
+                onClick={() => {
+                  setCategory('all')
+                  scrollTo('products')
+                }}
+              >
+                <span>View Full Inventory ({PRODUCTS.length} products)</span>
+                <Icon name="arrow" size={16} />
+              </button>
+            </div>
           </div>
         </div>
       </ParticleSection>
