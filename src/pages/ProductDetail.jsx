@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ParticleSection from '../particles/ParticleSection.jsx'
 import ProductCard from '../components/ProductCard.jsx'
+import PrescriptionModal from '../components/PrescriptionModal.jsx'
 import StructuredData from '../components/StructuredData.jsx'
 import Icon from '../components/Icon.jsx'
 import { PriceTag, ProductArt } from '../components/ProductBits.jsx'
@@ -25,6 +26,7 @@ function ProductView({ product }) {
   const inCart = lines.find((l) => l.product.id === product.id)?.qty ?? 0
   const [qty, setLocalQty] = useState(1)
   const [status, setStatus] = useState('')
+  const [rxModalOpen, setRxModalOpen] = useState(false)
   const related = PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 3)
 
   const addToCart = () => {
@@ -150,6 +152,7 @@ function ProductView({ product }) {
         )}
       </section>
       <StructuredData data={productSchema(product)} />
+      <PrescriptionModal isOpen={rxModalOpen} onClose={() => setRxModalOpen(false)} />
     </>
   )
 }

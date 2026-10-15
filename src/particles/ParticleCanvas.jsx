@@ -10,7 +10,7 @@ import ParticleField from './ParticleField.jsx'
  * Mounted once for the whole app, so route changes never re-create the
  * GL context — only the section scan is redone.
  */
-export default function ParticleCanvas({ routeKey, onReady, onFail }) {
+export default function ParticleCanvas({ routeKey, still = false, onReady, onFail }) {
   const [quality] = useState(getQualityTier)
   const tier = PARTICLE_CONFIG.tiers[quality]
   const controllerRef = useRef(null)
@@ -84,7 +84,7 @@ export default function ParticleCanvas({ routeKey, onReady, onFail }) {
   return (
     <Canvas
       className="particle-canvas"
-      frameloop={running ? 'always' : 'never'}
+      frameloop={running ? (still ? 'demand' : 'always') : 'never'}
       dpr={tier.dpr}
       gl={glOptions}
       camera={{ fov: PARTICLE_CONFIG.camera.fov, position: [0, 0, PARTICLE_CONFIG.camera.z], near: 0.1, far: 60 }}
@@ -99,7 +99,7 @@ export default function ParticleCanvas({ routeKey, onReady, onFail }) {
         cleanupRef.current = () => canvas.removeEventListener('webglcontextlost', onLost)
       }}
     >
-      <ParticleField controllerRef={controllerRef} tier={tier} onReady={onReady} />
+      <ParticleField controllerRef={controllerRef} tier={tier} still={still} onReady={onReady} />
     </Canvas>
   )
 }

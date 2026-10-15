@@ -6,7 +6,7 @@ import QuickViewModal from '../components/QuickViewModal.jsx'
 import PrescriptionModal from '../components/PrescriptionModal.jsx'
 import Icon from '../components/Icon.jsx'
 import { CATEGORIES, PRODUCTS } from '../data/products.js'
-import { SERVICES, STORE, hoursText, prescriptionLink, whatsappLink } from '../data/store.js'
+import { SERVICES, STORE, whatsappLink } from '../data/store.js'
 import TrustStrip from '../components/TrustStrip.jsx'
 import OpenStatus from '../components/OpenStatus.jsx'
 import StructuredData from '../components/StructuredData.jsx'
@@ -66,11 +66,12 @@ export default function Home() {
           <div className="hero__copy">
             <p className="eyebrow"><span className="eyebrow__dot" /> {STORE.tagline}</p>
             <h1 id="hero-title" className="hero__title">
-              Genuine medicines. <span className="text-gradient">Trusted care</span>, delivered to your door.
+              <span className="hero__title-line">Genuine medicines,</span>{' '}
+              <span className="hero__title-line text-gradient">delivered with care.</span>
             </h1>
             <p className="hero__lead">
-              Order prescription and everyday health essentials from {STORE.name}. Every order is checked by our
-              pharmacist before it is packed.
+              Prescription and everyday health essentials from {STORE.name}, checked by our pharmacist
+              before every order is packed.
             </p>
             <HeroSearch />
             <div className="hero__ctas">
@@ -87,9 +88,7 @@ export default function Home() {
             </div>
             <ul className="hero__facts">
               <li><OpenStatus /></li>
-              <li><Icon name="clock" size={16} /> {STORE.hours[0].label}: {hoursText(STORE.hours[0])}</li>
               <li><Icon name="delivery" size={16} /> Home delivery {STORE.delivery.radius}</li>
-              <li><Icon name="rx" size={16} /> In-app prescription review</li>
             </ul>
           </div>
         </div>

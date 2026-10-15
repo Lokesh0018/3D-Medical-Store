@@ -51,6 +51,22 @@
 .product-detail__facts dt { color: var(--ink-2); }
 .product-detail__facts dd { margin: 0; font-weight: 600; text-align: right; }
 
+.product-detail__substitute {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  color: #166534;
+  font-size: 0.9rem;
+}
+.product-detail__substitute svg {
+  color: #15803d;
+  flex-shrink: 0;
+}
+
 .product-detail__rx {
   display: flex;
   gap: 12px;

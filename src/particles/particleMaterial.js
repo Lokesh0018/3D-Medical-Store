@@ -60,7 +60,9 @@ const vertexShader = /* glsl */ `
     gl_Position = projectionMatrix * mv;
 
     float depth = -mv.z;
-    gl_PointSize = uSize * (0.45 + aRand.y * 0.9) * uPixelRatio * (1.0 - flight * 0.25) / depth;
+    gl_PointSize = uSize * (0.45 + aRand.y * 0.9) * uPixelRatio * (1.0 - flight * 0.25) / max(depth, 0.5);
+    // Cap sprite size so particles passing close to the camera stay crisp dots.
+    gl_PointSize = min(gl_PointSize, 14.0 * uPixelRatio);
 
     float accent = mix(aFrom.w, aTo.w, e);
     vec3 base = mix(uColorA, uColorB, aRand.w);

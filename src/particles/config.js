@@ -53,7 +53,7 @@ export const PARTICLE_CONFIG = {
     // Higher = tighter to the scrollbar, lower = floatier.
     smoothing: 3.4,
     // Initial "cloud gathers into the first shape" intro.
-    introDuration: 2.6,
+    introDuration: 2.0,
     // Dissolve duration when the route changes.
     routeFade: 0.35,
   },

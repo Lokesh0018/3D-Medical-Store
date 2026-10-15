@@ -68,6 +68,17 @@ export class ParticleSystem {
     this.fade = { v: 0 }
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 }
     this.perf = { frames: 0, elapsed: 0, warmup: 3, degraded: 0 }
+    // Reduced-motion mode: hold shapes without intro, drift, morph or parallax.
+    this.still = false
+  }
+
+  setStill(still) {
+    this.still = still
+    if (still) {
+      gsap.killTweensOf([this.intro, this.fade])
+      this.intro.v = 1
+      this.fade.v = 1
+    }
   }
 
   setPointer(nx, ny) {
@@ -83,6 +94,12 @@ export class ParticleSystem {
     this.layouts = [{ ...presets[0], scale: 1, x: presets[0].x * 0.4 }, ...presets]
     this.seg = -1
     gsap.killTweensOf(this.intro)
+    if (this.still) {
+      this.intro.v = 1
+      this.s = 1 + startIndex
+      this.fade.v = 1
+      return
+    }
     if (intro) {
       this.intro.v = 0
       this.s = 0
@@ -101,6 +118,10 @@ export class ParticleSystem {
     this.version = controller.version
     if (first) {
       this.#applySections(controller.presets, window.scrollY < 40, controller.getIndex())
+      return
+    }
+    if (this.still) {
+      this.#applySections(controller.presets, false, controller.getIndex())
       return
     }
     // Route change: dissolve, then regroup into the new page's first shape.
@@ -129,8 +150,13 @@ export class ParticleSystem {
 
     // Scrub toward the scroll target with frame-rate-independent damping.
     const target = this.intro.v + controller.getIndex()
-    this.s += (target - this.s) * (1 - Math.exp(-delta * transition.smoothing))
-    if (Math.abs(target - this.s) < 1e-4) this.s = target
+    if (this.still) {
+      // Snap to the nearest formed shape: no in-between morph frames.
+      this.s = Math.round(target)
+    } else {
+      this.s += (target - this.s) * (1 - Math.exp(-delta * transition.smoothing))
+      if (Math.abs(target - this.s) < 1e-4) this.s = target
+    }
     const maxS = this.shapes.length - 1
     const s = MathUtils.clamp(this.s, 0, maxS)
     const seg = Math.min(Math.floor(s), maxS - 1)
@@ -157,8 +183,14 @@ export class ParticleSystem {
     )
     pts.scale.setScalar(MathUtils.lerp(A.scale, B.scale, e))
 
-    this.time += delta
+    if (!this.still) this.time += delta
     const pt = this.pointer
+    if (this.still) {
+      pt.tx = 0
+      pt.ty = 0
+      pt.x = 0
+      pt.y = 0
+    }
     const k = 1 - Math.exp(-delta * 2)
     pt.x += (pt.tx - pt.x) * k
     pt.y += (pt.ty - pt.y) * k
@@ -179,7 +211,7 @@ export class ParticleSystem {
     u.uTime.value = this.time
     u.uStagger.value = transition.stagger
     u.uScatter.value = transition.scatter
-    u.uTurbulence.value = motion.turbulence
+    u.uTurbulence.value = this.still ? 0 : motion.turbulence
     u.uPixelRatio.value = pixelRatio
     return true
   }

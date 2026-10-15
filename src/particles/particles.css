@@ -19,49 +19,23 @@
 .particle-canvas-wrap.is-ready { opacity: 1; }
 .particle-canvas-wrap canvas { display: block; }
 
-.particle-fallback {
-  position: absolute;
-  inset: 0;
-  transition: opacity 1.2s ease;
-}
-.particle-fallback.is-hidden { opacity: 0; }
-
-.particle-fallback__glow {
+/* Soft ambient glows behind the particles for depth (always on). */
+.particle-experience__glow {
   position: absolute;
   border-radius: 50%;
   filter: blur(40px);
 }
-.particle-fallback__glow--a {
+.particle-experience__glow--a {
   width: 46vmax; height: 46vmax;
-  right: -6vmax; top: 8vh;
-  background: radial-gradient(circle, rgba(47, 224, 212, 0.16), transparent 65%);
+  right: -6vmax; top: 6vh;
+  background: radial-gradient(circle, rgba(47, 224, 212, 0.13), transparent 65%);
 }
-.particle-fallback__glow--b {
+.particle-experience__glow--b {
   width: 38vmax; height: 38vmax;
   left: -12vmax; bottom: -10vh;
-  background: radial-gradient(circle, rgba(74, 168, 255, 0.12), transparent 65%);
-}
-
-.particle-fallback__cross {
-  position: absolute;
-  width: min(34vw, 420px);
-  right: 12vw;
-  top: 50%;
-  transform: translateY(-50%) rotate(-8deg);
-  filter: drop-shadow(0 0 12px rgba(47, 224, 212, 0.35));
-}
-
-@media (max-width: 767px) {
-  .particle-fallback__cross {
-    width: 62vw;
-    right: 50%;
-    top: 34%;
-    transform: translate(50%, -50%) rotate(-8deg);
-    opacity: 0.4;
-  }
+  background: radial-gradient(circle, rgba(74, 168, 255, 0.1), transparent 65%);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .particle-fallback,
   .particle-canvas-wrap { transition: none; }
 }

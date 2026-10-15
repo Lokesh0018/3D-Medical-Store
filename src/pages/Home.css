@@ -18,19 +18,41 @@
   pointer-events: none;
 }
 .hero__inner { position: relative; }
-.hero__copy { max-width: 620px; }
+.hero__copy { max-width: 680px; }
 .hero__title {
-  font-size: clamp(2.3rem, 5vw, 4rem);
+  font-size: clamp(2.4rem, 4.6vw, 3.9rem);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  margin-bottom: 22px;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  margin-bottom: 20px;
+  text-wrap: balance;
+}
+/* Desktop: exactly two lines; phones wrap naturally. */
+@media (min-width: 768px) {
+  .hero__title-line { display: block; white-space: nowrap; }
 }
 .hero__lead {
-  font-size: clamp(1.02rem, 1.4vw, 1.2rem);
+  font-size: clamp(1.02rem, 1.35vw, 1.18rem);
   color: var(--muted);
-  max-width: 50ch;
-  margin-bottom: 32px;
+  max-width: 52ch;
+  margin-bottom: 30px;
 }
+
+/* Staggered entrance while the particles gather (transform/opacity only;
+   content is in the HTML from the start, so no layout shift or SEO cost). */
+.hero__copy > * {
+  animation: hero-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.hero__copy > :nth-child(1) { animation-delay: 0.05s; }
+.hero__copy > :nth-child(2) { animation-delay: 0.12s; }
+.hero__copy > :nth-child(3) { animation-delay: 0.2s; }
+.hero__copy > :nth-child(4) { animation-delay: 0.28s; }
+.hero__copy > :nth-child(5) { animation-delay: 0.36s; }
+.hero__copy > :nth-child(6) { animation-delay: 0.44s; }
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(14px); }
+}
+
 .hero__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
 
 .hero-search { margin-bottom: 20px; max-width: 580px; }
@@ -91,6 +113,7 @@
   color: var(--muted);
   font-size: 0.9rem;
 }
+.hero__facts { align-items: center; }
 .hero__facts li { display: inline-flex; align-items: center; gap: 8px; }
 .hero__facts svg { color: var(--cyan); }
 

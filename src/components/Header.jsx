@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { STORE } from '../data/store.js'
 import Icon from './Icon.jsx'
-import SearchModal from './SearchModal.jsx'
 import './Header.css'
 
 const NAV = [
@@ -16,7 +15,6 @@ const NAV = [
 export default function Header() {
   const { count, setOpen } = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onLight, setOnLight] = useState(false)
   const { pathname } = useLocation()
@@ -44,13 +42,8 @@ export default function Header() {
     }
   }, [pathname])
 
-  // Cmd+K or Ctrl+K opens quick search modal
   useEffect(() => {
     const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setSearchOpen((prev) => !prev)
-      }
       if (e.key === 'Escape' && menuOpen) setMenuOpen(false)
     }
     window.addEventListener('keydown', onKey)
@@ -93,15 +86,6 @@ export default function Header() {
           <div className="site-header__actions">
             <button
               type="button"
-              className="header-icon-button"
-              aria-label="Open search modal (Ctrl+K)"
-              onClick={() => setSearchOpen(true)}
-              title="Search medicines (Ctrl+K)"
-            >
-              <Icon name="search" size={20} />
-            </button>
-            <button
-              type="button"
               className="cart-button"
               onClick={() => setOpen(true)}
               aria-label={`Open cart, ${count} ${count === 1 ? 'item' : 'items'}`}
@@ -122,8 +106,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   )
 }

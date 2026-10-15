@@ -106,7 +106,8 @@ function cloud(count, rand) {
   for (let i = 0; i < count; i++) {
     randomDirection(rand, d)
     const r = 3.5 + Math.sqrt(rand()) * 7
-    write(out, i, d[0] * r * 1.4, d[1] * r * 0.9, d[2] * r - 2, rand() < 0.05 ? 1 : 0)
+    // z is compressed so no particle starts near the camera (no giant blurry sprites).
+    write(out, i, d[0] * r * 1.4, d[1] * r * 0.9, d[2] * r * 0.45 - 2.5, rand() < 0.05 ? 1 : 0)
   }
   return out
 }
