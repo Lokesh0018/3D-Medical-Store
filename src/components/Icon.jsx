@@ -31,6 +31,7 @@ const PATHS = {
   upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12',
   info: 'M12 16v-4M12 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
   sort: 'M3 8h12M3 12h8M3 16h4M17 14l3 3 3-3M20 7v10',
+  snowflake: 'M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14M10 4l2-2 2 2M10 20l2 2 2 2M4 10l-2 2 2 2M20 10l2 2-2 2',
 }
 
 export default function Icon({ name, size = 20, title, className, strokeWidth = 1.8 }) {

@@ -11,8 +11,9 @@ const ParticleCanvas = lazy(loadCanvas)
  * aria-hidden and pointer-events: none, so it never affects reading order,
  * focus, taps or layout.
  *
- * The 3D chunk is requested as soon as the app mounts (no static stand-in);
- * the particles fade in and gather into the first shape. With
+ * The 3D chunk is requested as soon as the app mounts and the particles
+ * assemble into the first shape. Pages show static stand-ins only when the
+ * particles cannot run (keyed off <html data-particles="off">). With
  * prefers-reduced-motion the same scene renders "still": shapes are held
  * without drift or morph animation and only redrawn when the page scrolls.
  */
@@ -56,6 +57,19 @@ export default function ParticleExperience({ routeKey }) {
   }, [userDisabled])
 
   const showCanvas = loaded && !userDisabled && !failed
+  const live = showCanvas && ready
+
+  // <html data-particles>: "ready" once particles are on screen; "off" when
+  // they cannot run here (no WebGL, Data Saver, turned off, or the canvas was
+  // lost), so pages can show static stand-ins only to those visitors.
+  useEffect(() => {
+    const root = document.documentElement
+    const unavailable = userDisabled || failed || !supportsWebGL() || prefersLightweight()
+    if (live) root.dataset.particles = 'ready'
+    else if (unavailable) root.dataset.particles = 'off'
+    else delete root.dataset.particles
+    return () => { delete root.dataset.particles }
+  }, [live, userDisabled, failed])
 
   return (
     <div className="particle-experience" aria-hidden="true">

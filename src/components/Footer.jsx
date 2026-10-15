@@ -7,7 +7,7 @@ import './Footer.css'
 
 export default function Footer() {
   return (
-    <ParticleSection as="footer" id="contact" preset="footer" className="site-footer">
+    <ParticleSection as="footer" id="site-footer" preset="footer" className="site-footer">
       <div className="container site-footer__grid">
         <div className="site-footer__brand">
           <Link to="/" className="brand">
@@ -20,7 +20,7 @@ export default function Footer() {
           <div className="site-footer__trust-badges">
             <span className="footer-trust-tag"><Icon name="shield" size={14} /> Drug License Verified</span>
             <span className="footer-trust-tag"><Icon name="check" size={14} /> Registered Pharmacist on Duty</span>
-            <span className="footer-trust-tag"><Icon name="delivery" size={14} /> Cold-Chain Storage Controlled</span>
+            <span className="footer-trust-tag"><Icon name="snowflake" size={14} /> Cold-Chain Stored (2°C - 8°C)</span>
           </div>
         </div>
 
@@ -28,7 +28,7 @@ export default function Footer() {
           <h2 className="site-footer__heading">Shop</h2>
           <ul className="site-footer__list">
             {CATEGORIES.map((c) => (
-              <li key={c.id}><Link to={`/products?category=${c.id}`}>{c.name}</Link></li>
+              <li key={c.id}><a href="#products">{c.name}</a></li>
             ))}
           </ul>
         </div>
@@ -48,7 +48,7 @@ export default function Footer() {
           <ul className="site-footer__list">
             <li><a href={STORE.phoneHref}><Icon name="phone" size={16} /> {STORE.phoneDisplay}</a></li>
             <li><a href={whatsappLink()} target="_blank" rel="noopener noreferrer"><Icon name="whatsapp" size={16} /> WhatsApp</a></li>
-            <li><Link to="/contact#faq">FAQ</Link></li>
+            <li><a href="#faq">FAQ</a></li>
             <li><a href={`mailto:${STORE.email}`}><Icon name="mail" size={16} /> {STORE.email}</a></li>
             {STORE.social.map((s) => (
               <li key={s.label}><a href={s.href}>{s.label}</a></li>

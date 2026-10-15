@@ -35,6 +35,13 @@ const vertexShader = /* glsl */ `
   uniform float uProgress;
   uniform float uStagger;
   uniform float uScatter;
+  uniform float uSweep;
+  uniform float uFlow;     // 0..1 radial scatter → horizontal stream
+  uniform float uFlowDir;  // ±1, direction of travel toward the next shape
+  uniform float uDepth;    // 0..1 depth shading strength
+  uniform float uTwinkle;  // brightness flicker amplitude (0.2 = 80..100%)
+  uniform float uSettle;
+  uniform float uSizeScale;
   uniform float uTurbulence;
   uniform float uTime;
   uniform float uSize;
@@ -67,7 +74,21 @@ const vertexShader = /* glsl */ `
     float flight = sin(3.14159265 * p);
 
     vec3 pos = mix(aFrom.xyz, aTo.xyz, e);
-    pos += (aDir * (0.55 + aRand.y) + flow(pos * 0.45, uTime * 0.6, phase) * 0.6) * uScatter * flight;
+    // In-flight offset. Radial: scatter along a random direction plus flow,
+    // with a tangential sweep so paths curve. Stream (uFlow): particles are
+    // drawn out along the direction of travel into a level ribbon with a soft
+    // wave — a controlled horizontal flow rather than a burst.
+    vec3 tangent = normalize(vec3(-aDir.z, 0.0, aDir.x) + vec3(1e-4, 0.0, 0.0));
+    vec3 radial = (aDir * (0.55 + aRand.y) + flow(pos * 0.45, uTime * 0.6, phase) * 0.6) * uScatter
+      + tangent * (0.4 + aRand.y) * uSweep;
+    vec3 stream = vec3(
+      uFlowDir * (0.6 + aRand.y * 2.8),
+      -pos.y * 0.55 + (aRand.w - 0.5) * 0.9 + sin(pos.x * 1.2 + uTime * 0.7 + phase) * 0.14,
+      -pos.z * 0.5 + aDir.z * 0.25
+    ) * uScatter;
+    pos += mix(radial, stream, uFlow) * flight;
+    // First-load settle: start slightly expanded, ease into the rest pose.
+    pos += aDir * (0.3 + aRand.y) * uSettle;
     pos += flow(pos * 0.7, uTime, phase) * uTurbulence;
 
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
@@ -99,7 +120,10 @@ const vertexShader = /* glsl */ `
     gl_Position.xy += push * gl_Position.w;
 
     float depth = -mv.z;
-    gl_PointSize = uSize * (0.45 + aRand.y * 0.9) * uPixelRatio * (1.0 - flight * 0.25) / max(depth, 0.5);
+    // Depth shading (uDepth): front of the shape ≈ 1, back ≈ 0.
+    float nearness = smoothstep(9.6, 8.4, depth);
+    float depthShade = mix(1.0, 0.45 + 0.55 * nearness, uDepth);
+    gl_PointSize = uSize * uSizeScale * mix(1.0, 0.8 + 0.3 * nearness, uDepth) * (0.45 + aRand.y * 0.9) * uPixelRatio * (1.0 - flight * 0.25) / max(depth, 0.5);
     // Cap sprite size so particles passing close to the camera stay crisp dots.
     gl_PointSize = min(gl_PointSize, 14.0 * uPixelRatio) * (1.0 + lift * 0.25);
 
@@ -107,10 +131,10 @@ const vertexShader = /* glsl */ `
     vec3 base = mix(uColorA, uColorB, aRand.w);
     vColor = mix(mix(base, uAccent, accent * 0.7), uAccent, lift * 0.3);
 
-    // Gentle twinkle (never below 80%) and depth fade keep motion calm.
-    float twinkle = 0.8 + 0.2 * sin(uTime * 1.3 + phase);
+    // Gentle twinkle (amplitude per section) and depth fade keep motion calm.
+    float twinkle = 1.0 - uTwinkle + uTwinkle * sin(uTime * 1.3 + phase);
     float fog = smoothstep(18.0, 6.0, depth);
-    vAlpha = min(uOpacity * (0.45 + 0.55 * aRand.w) * twinkle * fog * (1.0 + lift * 0.3), 1.0);
+    vAlpha = min(uOpacity * (0.45 + 0.55 * aRand.w) * twinkle * fog * depthShade * (1.0 + lift * 0.3), 1.0);
   }
 `
 
@@ -140,6 +164,13 @@ export function createParticleMaterial({ size, pixelRatio }) {
       uProgress: { value: 0 },
       uStagger: { value: 0.4 },
       uScatter: { value: 1.5 },
+      uSweep: { value: 0 },
+      uFlow: { value: 0 },
+      uFlowDir: { value: -1 },
+      uDepth: { value: 0 },
+      uTwinkle: { value: 0.2 },
+      uSettle: { value: 0 },
+      uSizeScale: { value: 1 },
       uTurbulence: { value: 0.045 },
       uTime: { value: 0 },
       uSize: { value: size },

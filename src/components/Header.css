@@ -1,16 +1,16 @@
+/* ==========================================================================
+   Header: Floating Capsule Glassmorphism Design
+   ========================================================================== */
+
 .site-header {
   position: fixed;
-  inset: 0 0 auto 0;
+  top: 14px;
+  left: 0;
+  right: 0;
   z-index: 50;
   height: var(--header-h);
-  transition: background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
-  border-bottom: 1px solid transparent;
-}
-.site-header.is-solid {
-  background: rgba(255, 255, 255, 0.72);
-  border-bottom-color: var(--glass-border);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
+  pointer-events: none; /* Allows clicks around the floating pill */
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .skip-link {
@@ -24,16 +24,53 @@
   color: #ffffff;
   font-weight: 700;
   text-decoration: none;
+  pointer-events: auto;
 }
 .skip-link:focus { top: 12px; }
 
+/* The Floating Capsule Container */
 .site-header__inner {
-  height: 100%;
+  pointer-events: auto;
+  height: 58px;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding: 0 12px 0 18px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 1px 2px rgba(15, 31, 23, 0.04),
+    0 8px 28px -6px rgba(15, 31, 23, 0.09),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  transition: 
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
+.site-header.is-solid .site-header__inner {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(219, 233, 224, 0.9);
+  box-shadow: 
+    0 4px 20px -4px rgba(15, 31, 23, 0.1),
+    0 16px 40px -12px rgba(22, 163, 74, 0.12),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.site-header.is-light .site-header__inner {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(219, 233, 224, 1);
+  box-shadow: 
+    0 4px 24px -4px rgba(15, 31, 23, 0.08),
+    0 12px 32px -8px rgba(15, 31, 23, 0.06);
+}
+
+/* Brand */
 .brand {
   display: inline-flex;
   align-items: center;
@@ -41,49 +78,122 @@
   text-decoration: none;
   font-family: var(--font-head);
   font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: -0.01em;
+  font-size: 1.05rem;
+  letter-spacing: -0.015em;
   color: var(--text);
   flex-shrink: 0;
+  cursor: pointer;
 }
 .brand__mark {
   display: inline-grid;
   place-items: center;
-  width: 34px; height: 34px;
+  width: 34px;
+  height: 34px;
   border-radius: 10px;
-  color: var(--green);
-  background: linear-gradient(140deg, rgba(22, 163, 74, 0.2), rgba(16, 185, 129, 0.12));
-  border: 1px solid rgba(22, 163, 74, 0.35);
+  color: #fff;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  box-shadow: 0 4px 12px -2px rgba(22, 163, 74, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease;
+}
+.brand:hover .brand__mark {
+  transform: scale(1.05);
 }
 
+/* Navigation Links */
 .site-nav {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 16px;
 }
 .site-nav ul {
   list-style: none;
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 2px;
+  background: rgba(15, 31, 23, 0.035);
+  padding: 3px 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 31, 23, 0.04);
 }
 .site-nav a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 44px;
+  justify-content: center;
+  min-height: 34px;
   padding: 0 14px;
   border-radius: 999px;
   text-decoration: none;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   color: var(--muted);
-  transition: color 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  transition: color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
 }
-.site-nav a:hover { color: var(--text); background: rgba(21, 128, 61, 0.06); }
-.site-nav a.active { color: var(--text); background: rgba(22, 163, 74, 0.12); }
-.site-nav__call { color: var(--text) !important; border: 1px solid var(--glass-border); }
+.site-nav a:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.7);
+}
+.site-nav a.active {
+  color: var(--green-ink);
+  font-weight: 650;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 31, 23, 0.08);
+}
 
+/* Live Pharmacist Beacon Button */
+.site-nav__call {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.22);
+  color: var(--green-ink) !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.site-nav__call:hover {
+  background: rgba(22, 163, 74, 0.14);
+  border-color: rgba(22, 163, 74, 0.35);
+  transform: translateY(-1px);
+}
+.site-nav__call-num {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* Pulsing beacon */
+.live-status-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+}
+.live-status-dot.pulse::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background-color: rgba(34, 197, 94, 0.6);
+  animation: beacon-pulse 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+}
+@keyframes beacon-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  70% { transform: scale(2.4); opacity: 0; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Header Actions */
 .site-header__actions {
   display: flex;
   align-items: center;
@@ -94,66 +204,75 @@
   position: relative;
   display: inline-grid;
   place-items: center;
-  width: 44px; height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 1px solid var(--glass-border);
-  background: rgba(21, 128, 61, 0.05);
+  border: 1px solid var(--line);
+  background: #ffffff;
   color: var(--text);
+  box-shadow: 0 1px 4px rgba(15, 31, 23, 0.05);
   cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+.cart-button:hover,
+.menu-toggle:hover {
+  background: #f4faf6;
+  border-color: var(--green);
+  transform: translateY(-1px);
 }
 .cart-button__badge {
   position: absolute;
-  top: -4px; right: -4px;
-  min-width: 20px; height: 20px;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
   padding: 0 5px;
   border-radius: 999px;
-  background: var(--green);
+  background: linear-gradient(135deg, #16a34a, #15803d);
   color: #ffffff;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   display: grid;
   place-items: center;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.4);
 }
-.header-icon-button:hover,
-.cart-button:hover,
-.menu-toggle:hover { background: rgba(21, 128, 61, 0.1); }
 .menu-toggle { display: none; }
 
-/* Light variant while the bar sits over a light (product / form) section. */
-.site-header.is-light {
-  background: rgba(255, 255, 255, 0.94);
-  border-bottom-color: var(--line);
+/* Responsive adjustments */
+@media (max-width: 990px) {
+  .site-nav__call-num { display: none; }
 }
-.site-header.is-light .brand { color: var(--ink); }
-.site-header.is-light .brand__mark { color: var(--green-ink); border-color: rgba(21, 128, 61, 0.35); }
-.site-header.is-light .site-nav a { color: var(--ink-2); }
-.site-header.is-light .site-nav a:hover { color: var(--ink); background: rgba(15, 31, 23, 0.06); }
-.site-header.is-light .site-nav a.active { color: var(--green-ink); background: rgba(21, 128, 61, 0.1); }
-.site-header.is-light .site-nav__call { color: var(--ink) !important; border-color: var(--line); }
-.site-header.is-light .cart-button,
-.site-header.is-light .menu-toggle {
-  color: var(--ink);
-  border-color: var(--line);
-  background: #fff;
-}
-.site-header.is-light .cart-button__badge { background: var(--green-ink); color: #fff; }
-.site-header.is-light :focus-visible { outline-color: var(--green-ink); }
 
 @media (max-width: 900px) {
+  .site-header {
+    top: 0;
+    height: var(--header-h);
+  }
+  .site-header__inner {
+    border-radius: 0;
+    height: 100%;
+    max-width: 100%;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    padding-inline: clamp(16px, 4vw, 32px);
+  }
   .menu-toggle { display: inline-grid; }
   .site-header__actions { margin-left: auto; }
   .site-nav {
     position: fixed;
     top: var(--header-h);
-    left: 0; right: 0;
+    left: 0;
+    right: 0;
     flex-direction: column;
     align-items: stretch;
     gap: 16px;
-    padding: 16px clamp(16px, 4vw, 32px) 24px;
-    background: rgba(255, 255, 255, 0.96);
-    border-bottom: 1px solid var(--glass-border);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
+    padding: 20px clamp(16px, 4vw, 32px) 28px;
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 14px 30px -10px rgba(15, 31, 23, 0.12);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     visibility: hidden;
     opacity: 0;
     transform: translateY(-8px);
@@ -165,21 +284,35 @@
     transform: none;
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
-  .site-nav ul { flex-direction: column; }
-  .site-nav a { width: 100%; font-size: 1.05rem; }
-  .site-nav__call { justify-content: center; }
+  .site-nav ul {
+    flex-direction: column;
+    background: transparent;
+    padding: 0;
+    border: none;
+    gap: 6px;
+  }
+  .site-nav a {
+    width: 100%;
+    min-height: 42px;
+    font-size: 1rem;
+    justify-content: flex-start;
+    padding-left: 16px;
+  }
+  .site-nav a.active {
+    background: rgba(22, 163, 74, 0.1);
+    color: var(--green-ink);
+  }
+  .site-nav__call {
+    justify-content: center;
+    min-height: 44px;
+    font-size: 0.9rem;
+  }
+  .site-nav__call-num { display: inline; }
 }
 
 @media (max-width: 767px) {
   .site-header .cart-button { display: none; }
   .site-header__actions { gap: 6px; }
-  .brand { gap: 8px; font-size: 1rem; }
+  .brand { gap: 8px; font-size: 0.98rem; }
   .site-header__inner { gap: 12px; }
-}
-
-@media (max-width: 380px) {
-  .brand__name { font-size: 0.9rem; }
-  .brand__mark { width: 30px; height: 30px; }
-  .site-header__inner { gap: 8px; }
-  .site-header__actions { gap: 4px; }
 }

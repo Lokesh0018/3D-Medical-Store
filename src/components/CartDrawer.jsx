@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { formatPrice } from '../data/products.js'
 import { STORE, whatsappLink } from '../data/store.js'
 import Icon from './Icon.jsx'
+import DeliveryCountdown from './DeliveryCountdown.jsx'
 import './CartDrawer.css'
 
 function orderMessage(lines, total, hasRx) {
@@ -97,9 +97,16 @@ export default function CartDrawer() {
           <div className="cart-drawer__empty">
             <Icon name="cart" size={48} className="cart-drawer__empty-icon" />
             <p>Your shopping cart is empty.</p>
-            <Link to="/products" className="btn btn--primary" onClick={() => setOpen(false)}>
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={() => {
+                setOpen(false)
+                document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })
+              }}
+            >
               Browse catalogue
-            </Link>
+            </button>
           </div>
         ) : step === 'items' ? (
           <>
@@ -109,6 +116,7 @@ export default function CartDrawer() {
               ) : (
                 <span><Icon name="delivery" size={16} /> Add ₹{deliveryThreshold - total} more for <strong>FREE Delivery</strong></span>
               )}
+              <DeliveryCountdown compact className="cart-drawer__countdown" />
             </div>
 
             <ul className="cart-drawer__lines">

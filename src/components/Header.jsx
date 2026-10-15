@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { STORE } from '../data/store.js'
 import Icon from './Icon.jsx'
@@ -19,11 +18,10 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [onLight, setOnLight] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
 
-  // Track active section as user scrolls
+  // Track active section as user scrolls and sync URL hash smoothly
   useEffect(() => {
+    let timeoutId = null
     const handleObserver = () => {
       const ids = NAV.map((n) => n.targetId)
       for (const id of [...ids].reverse()) {
@@ -32,6 +30,19 @@ export default function Header() {
           const rect = el.getBoundingClientRect()
           if (rect.top <= 140) {
             setActiveSection(id)
+            // Update URL hash smoothly without polluting browser history stack
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(() => {
+              const newHash = id === 'hero' ? '' : `#${id}`
+              const targetUrl = window.location.pathname + newHash
+              if (window.location.hash !== newHash && (window.location.hash || newHash)) {
+                try {
+                  window.history.replaceState(null, '', targetUrl)
+                } catch {
+                  /* ignore */
+                }
+              }
+            }, 100)
             break
           }
         }
@@ -39,7 +50,10 @@ export default function Header() {
     }
     window.addEventListener('scroll', handleObserver, { passive: true })
     handleObserver()
-    return () => window.removeEventListener('scroll', handleObserver)
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener('scroll', handleObserver)
+    }
   }, [])
 
   // Track scroll state and whether the header currently sits over a light
@@ -63,7 +77,7 @@ export default function Header() {
       cancelAnimationFrame(frame)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [pathname])
+  }, [])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -77,10 +91,6 @@ export default function Header() {
 
   const scrollTo = (targetId) => {
     close()
-    if (pathname !== '/') {
-      navigate(`/#${targetId}`)
-      return
-    }
     const el = document.getElementById(targetId)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' })
@@ -99,22 +109,18 @@ export default function Header() {
       <header className={`site-header${scrolled || menuOpen ? ' is-solid' : ''}${onLight && !menuOpen ? ' is-light' : ''}`}>
         <a className="skip-link" href="#main">Skip to content</a>
         <div className="site-header__inner container">
-          <Link
-            to="/"
+          <a
+            href="#hero"
             className="brand"
             onClick={(e) => {
-              if (pathname === '/') {
-                e.preventDefault()
-                scrollTo('hero')
-              } else {
-                close()
-              }
+              e.preventDefault()
+              scrollTo('hero')
             }}
             aria-label={`${STORE.name} home`}
           >
             <span className="brand__mark"><Icon name="cross" size={18} strokeWidth={2} /></span>
             <span className="brand__name">{STORE.name}</span>
-          </Link>
+          </a>
 
           <nav
             id="site-nav"
@@ -127,6 +133,7 @@ export default function Header() {
                   <a
                     href={`#${item.targetId}`}
                     className={activeSection === item.targetId ? 'active' : ''}
+                    aria-current={activeSection === item.targetId ? 'location' : undefined}
                     onClick={(e) => {
                       e.preventDefault()
                       scrollTo(item.targetId)
@@ -138,7 +145,9 @@ export default function Header() {
               ))}
             </ul>
             <a className="site-nav__call" href={STORE.phoneHref}>
-              <Icon name="phone" size={16} /> {STORE.phoneDisplay}
+              <span className="live-status-dot pulse" aria-hidden="true" />
+              <span>Pharmacist On-Duty</span>
+              <span className="site-nav__call-num">· {STORE.phoneDisplay}</span>
             </a>
           </nav>
 

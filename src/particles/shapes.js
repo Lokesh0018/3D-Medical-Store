@@ -112,10 +112,27 @@ function cloud(count, rand) {
   return out
 }
 
+/** Fisher–Yates shuffle with the shape's seeded PRNG. */
+function shuffle(arr, rand) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const k = Math.floor(rand() * (i + 1))
+    const t = arr[i]
+    arr[i] = arr[k]
+    arr[k] = t
+  }
+  return arr
+}
+
 /**
- * Medical cross: an extruded plus sign. The 12-vertex outline is sampled for
- * side walls and a crisp front rim (which define the silhouette); the front and
- * back faces are filled by rejection sampling; a sparse interior adds depth.
+ * Medical cross: an extruded plus sign, sampled in layers.
+ *
+ * Faces use stratified (jittered-grid) sampling instead of pure random
+ * points, so the fill is even — no clumps or holes — and the silhouette reads
+ * as precise rather than noisy. Front and back rims are traced with tight
+ * jitter to give crisp edges on both planes; side walls join them and a
+ * sparse interior adds volume. Each stratified pool is shuffled, so particle
+ * i still lands on an arbitrary spot and any prefix of the population remains
+ * a uniform sample (the density fallback relies on that).
  */
 function cross(count, rand) {
   const A = 1.95 // half arm length
@@ -130,51 +147,96 @@ function cross(count, rand) {
     return Math.hypot(q[0] - p[0], q[1] - p[1])
   })
   const perimeter = segLen.reduce((a, b) => a + b, 0)
+  const inside = (x, y) =>
+    (Math.abs(x) <= W && Math.abs(y) <= A) || (Math.abs(y) <= W && Math.abs(x) <= A)
 
-  const onOutline = () => {
-    let t = rand() * perimeter
+  const alongOutline = (t) => {
     let i = 0
-    while (t > segLen[i]) t -= segLen[i++]
+    while (t > segLen[i] && i < segLen.length - 1) t -= segLen[i++]
     const p = outline[i]
     const q = outline[(i + 1) % outline.length]
     const f = t / segLen[i]
     return [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]
   }
-  const inside = (x, y) =>
-    (Math.abs(x) <= W && Math.abs(y) <= A) || (Math.abs(y) <= W && Math.abs(x) <= A)
-  const inFace = () => {
+
+  // Stratified pools: roughly n evenly spread points each, then shuffled.
+  const facePool = (n) => {
+    const area = 8 * A * W - 4 * W * W
+    const h = Math.sqrt(area / Math.max(n, 1))
+    const pts = []
+    for (let gx = -A; gx < A; gx += h) {
+      for (let gy = -A; gy < A; gy += h) {
+        const x = gx + rand() * h
+        const y = gy + rand() * h
+        if (inside(x, y)) pts.push([x, y])
+      }
+    }
+    return shuffle(pts, rand)
+  }
+  const outlinePool = (n) => {
+    const pts = []
+    for (let k = 0; k < n; k++) pts.push(alongOutline(((k + rand()) / n) * perimeter))
+    return shuffle(pts, rand)
+  }
+  const randomFace = () => {
     for (;;) {
       const x = (rand() * 2 - 1) * A
       const y = (rand() * 2 - 1) * A
       if (inside(x, y)) return [x, y]
     }
   }
+  // Draw from a pool; if random layer picks overrun it, fall back to random.
+  const take = (pool, fallback) => pool.pop() ?? fallback()
+  const randomOutline = () => alongOutline(rand() * perimeter)
+
+  // Layer shares of the population.
+  const FRONT = 0.3
+  const BACK = 0.12
+  const WALL = 0.24
+  const RIM_FRONT = 0.16
+  const RIM_BACK = 0.08 // remainder (0.10): interior volume
+  const front = facePool(count * FRONT)
+  const back = facePool(count * BACK)
+  const wall = outlinePool(Math.ceil(count * WALL))
+  const rimFront = outlinePool(Math.ceil(count * RIM_FRONT))
+  const rimBack = outlinePool(Math.ceil(count * RIM_BACK))
 
   const out = new Float32Array(count * 4)
-  const j = 0.012
+  const jFace = 0.012
+  const jRim = 0.007
   for (let i = 0; i < count; i++) {
     const r = rand()
-    let x, y, z, accent
-    if (r < 0.28) {
-      ;[x, y] = inFace()
+    let x, y, z, accent, j
+    if (r < FRONT) {
+      ;[x, y] = take(front, randomFace)
       z = D
-      accent = 0.15
-    } else if (r < 0.42) {
-      ;[x, y] = inFace()
+      accent = 0.12
+      j = jFace
+    } else if (r < FRONT + BACK) {
+      ;[x, y] = take(back, randomFace)
       z = -D
       accent = 0
-    } else if (r < 0.72) {
-      ;[x, y] = onOutline()
+      j = jFace
+    } else if (r < FRONT + BACK + WALL) {
+      ;[x, y] = take(wall, randomOutline)
       z = (rand() * 2 - 1) * D
-      accent = 0.55
-    } else if (r < 0.86) {
-      ;[x, y] = onOutline()
+      accent = 0.5
+      j = jRim
+    } else if (r < FRONT + BACK + WALL + RIM_FRONT) {
+      ;[x, y] = take(rimFront, randomOutline)
       z = D
       accent = 1
+      j = jRim
+    } else if (r < FRONT + BACK + WALL + RIM_FRONT + RIM_BACK) {
+      ;[x, y] = take(rimBack, randomOutline)
+      z = -D
+      accent = 0.7
+      j = jRim
     } else {
-      ;[x, y] = inFace()
+      ;[x, y] = randomFace()
       z = (rand() * 2 - 1) * D * 0.8
       accent = 0
+      j = jFace
     }
     write(out, i, x + gauss(rand) * j, y + gauss(rand) * j, z + gauss(rand) * j, accent)
   }

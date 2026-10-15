@@ -12,8 +12,27 @@ export default function ScrollManager() {
   const prevPath = useRef(pathname)
 
   useLayoutEffect(() => {
-    const changed = prevPath.current !== pathname
-    prevPath.current = pathname
+    // Disable browser's automatic scroll restoration on refresh so page starts at top
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+
+    const navEntries = window.performance?.getEntriesByType?.('navigation')
+    const isReload = navEntries && navEntries[0]?.type === 'reload'
+
+    if (isReload) {
+      // If user refreshed the page, scroll cleanly to top hero section
+      window.scrollTo(0, 0)
+      if (window.location.hash) {
+        try {
+          window.history.replaceState(null, '', window.location.pathname)
+        } catch {
+          /* ignore */
+        }
+      }
+      return
+    }
+
     if (hash) {
       const el = document.getElementById(hash.slice(1))
       if (el) {
@@ -21,7 +40,8 @@ export default function ScrollManager() {
         return
       }
     }
-    if (changed) window.scrollTo(0, 0)
+
+    window.scrollTo(0, 0)
   }, [pathname, hash])
 
   return null

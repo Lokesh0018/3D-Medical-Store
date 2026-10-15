@@ -201,6 +201,14 @@ address { font-style: normal; }
 }
 .btn--outline:hover { border-color: var(--green-ink); color: var(--green-ink); }
 
+/* Mint secondary: prominent without competing with a solid primary nearby. */
+.btn--soft {
+  background: #ecf8f0;
+  border-color: #bfe0cb;
+  color: var(--green-ink);
+}
+.btn--soft:hover { background: #dff3e6; border-color: var(--green-ink); }
+
 .link-button {
   background: none;
   border: 0;

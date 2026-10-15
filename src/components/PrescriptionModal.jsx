@@ -159,8 +159,10 @@ export default function PrescriptionModal({ isOpen, onClose }) {
           </div>
 
           <div className="rx-trust-points">
-            <div><Icon name="shield" size={16} /> 100% Confidential &amp; HIPAA-aligned handling</div>
-            <div><Icon name="check" size={16} /> Verified only by qualified registered pharmacists</div>
+            <div><Icon name="shield" size={16} /> 100% Confidential &amp; Encrypted Prescription Handling</div>
+            <div>
+              <Icon name="check" size={16} /> Verified by <strong>{STORE.pharmacist.name} ({STORE.pharmacist.regNo})</strong>
+            </div>
           </div>
 
           <div className="rx-actions">

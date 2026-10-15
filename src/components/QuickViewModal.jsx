@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { PriceTag, ProductArt } from './ProductBits.jsx'
 import Icon from './Icon.jsx'
 import { useCart } from '../context/CartContext.jsx'
-import { categoryName, productPath, requestLink } from '../data/products.js'
+import { categoryName, requestLink } from '../data/products.js'
 import { STORE, prescriptionLink } from '../data/store.js'
 import './QuickViewModal.css'
 
@@ -76,6 +75,11 @@ export default function QuickViewModal({ product, onClose }) {
                     <Icon name="rx" size={14} /> Prescription Required
                   </span>
                 )}
+                {product.coldChain && (
+                  <span className="badge badge--cold-chain">
+                    <Icon name="snowflake" size={14} /> Cold-Chain Stored (2°C - 8°C)
+                  </span>
+                )}
                 <span className={`badge ${product.inStock ? 'badge--ok' : 'badge--out'}`}>
                   {product.inStock ? 'In stock' : 'Out of stock'}
                 </span>
@@ -135,13 +139,6 @@ export default function QuickViewModal({ product, onClose }) {
                   <Icon name="whatsapp" size={18} /> Request Item
                 </a>
               )}
-              <Link
-                to={productPath(product)}
-                className="btn btn--ghost btn--lg"
-                onClick={onClose}
-              >
-                View Full Page <Icon name="arrow" size={16} />
-              </Link>
             </div>
 
             <div className="quick-view-footer-note">

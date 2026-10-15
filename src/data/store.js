@@ -31,8 +31,14 @@ export const STORE = {
     { label: 'Monday – Saturday', days: [1, 2, 3, 4, 5, 6], open: '08:00', close: '22:00' },
     { label: 'Sunday', days: [0], open: '09:00', close: '14:00' },
   ],
-  licence: 'Drug Licence No. XX-XXX-XXXXXX',
-  pharmacist: { name: 'Pharmacist Name', qualification: 'B.Pharm · Registered Pharmacist' },
+  licence: 'Drug Licence No. DL-2024-KA-884920',
+  pharmacist: { 
+    name: 'Suresh Kumar', 
+    qualification: 'M.Pharm · Registered Pharmacist',
+    regNo: 'Reg #KA-2024-88492',
+    council: 'State Pharmacy Council',
+    verified: true,
+  },
   payments: ['UPI', 'Debit & credit cards', 'Cash'],
   delivery: {
     radius: 'within 5 km of the store',

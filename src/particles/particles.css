@@ -33,7 +33,8 @@
 .particle-experience__glow--b {
   width: 38vmax; height: 38vmax;
   left: -12vmax; bottom: -10vh;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.09), transparent 65%);
+  /* Kept faint: it sits under the hero copy and lower hero. */
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.045), transparent 65%);
 }
 
 @media (prefers-reduced-motion: reduce) {

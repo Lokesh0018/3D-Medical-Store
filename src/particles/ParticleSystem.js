@@ -66,9 +66,11 @@ export class ParticleSystem {
     this.time = 0
     this.intro = { v: 0 }
     this.fade = { v: 0 }
+    this.settle = { v: 0 } // 1 → particles spread slightly beyond their rest pose
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 }
     // Hover ripple state. nx/ny are NDC (y up); last* is the previous spawn.
-    this.hover = { nx: 0, ny: 0, inside: false, strength: 0, lastX: 0, lastY: 0, lastT: -Infinity, next: 0 }
+    // px/py trail the cursor so displaced particles drift back rather than snap.
+    this.hover = { nx: 0, ny: 0, px: 0, py: 0, inside: false, strength: 0, lastX: 0, lastY: 0, lastT: -Infinity, next: 0 }
     this.perf = { frames: 0, elapsed: 0, warmup: 3, degraded: 0 }
     // Reduced-motion mode: hold shapes without intro, drift, morph or parallax.
     this.still = false
@@ -77,9 +79,10 @@ export class ParticleSystem {
   setStill(still) {
     this.still = still
     if (still) {
-      gsap.killTweensOf([this.intro, this.fade])
+      gsap.killTweensOf([this.intro, this.fade, this.settle])
       this.intro.v = 1
       this.fade.v = 1
+      this.settle.v = 0
     }
   }
 
@@ -103,7 +106,10 @@ export class ParticleSystem {
     h.strength += (target - h.strength) * (1 - Math.exp(-delta * 6))
     const x = h.nx * aspect
     const y = h.ny
-    u.uPointer.value.set(x, y, h.strength)
+    const follow = 1 - Math.exp(-delta * 9)
+    h.px += (x - h.px) * follow
+    h.py += (y - h.py) * follow
+    u.uPointer.value.set(h.px, h.py, h.strength)
     if (!h.inside || this.still) return
     const moved = Math.hypot(x - h.lastX, y - h.lastY)
     if (moved < ripple.spawnDistance || this.time - h.lastT < ripple.spawnInterval) return
@@ -117,11 +123,11 @@ export class ParticleSystem {
   }
 
   /** Point the system at a (new) set of sections. */
-  #applySections(presets, intro, startIndex) {
+  #applySections(presets, intro, startIndex, settle = false) {
     if (!presets.length) return
     this.shapes = ['cloud', ...presets.map((p) => p.shape)]
     // The intro cloud borrows the first preset's look, roughly centred.
-    this.layouts = [{ ...presets[0], scale: 1, x: presets[0].x * 0.4 }, ...presets]
+    this.layouts = [{ ...presets[0], scale: 1, x: presets[0].x * 0.4, flow: 0 }, ...presets]
     this.seg = -1
     gsap.killTweensOf(this.intro)
     if (this.still) {
@@ -130,7 +136,13 @@ export class ParticleSystem {
       this.fade.v = 1
       return
     }
-    if (intro) {
+    if (settle) {
+      // First page load: draw the shape already formed and let it settle in.
+      this.intro.v = 1
+      this.s = 1 + startIndex
+      this.settle.v = 1
+      gsap.to(this.settle, { v: 0, duration: transition.settleDuration, ease: 'power3.out' })
+    } else if (intro) {
       this.intro.v = 0
       this.s = 0
       gsap.to(this.intro, { v: 1, duration: transition.introDuration, ease: 'power2.inOut' })
@@ -147,7 +159,7 @@ export class ParticleSystem {
     const first = this.version === -1
     this.version = controller.version
     if (first) {
-      this.#applySections(controller.presets, window.scrollY < 40, controller.getIndex())
+      this.#applySections(controller.presets, false, controller.getIndex(), true)
       return
     }
     if (this.still) {
@@ -211,7 +223,11 @@ export class ParticleSystem {
       MathUtils.lerp(A.y, B.y, e) * viewport.height,
       0,
     )
-    pts.scale.setScalar(MathUtils.lerp(A.scale, B.scale, e))
+    const scale = MathUtils.lerp(A.scale, B.scale, e)
+    pts.scale.setScalar(scale)
+    // Smaller shapes (tablet / phone layouts) get proportionally finer dots,
+    // so a compact cross stays crisp instead of turning into a blur.
+    u.uSizeScale.value = MathUtils.clamp(Math.sqrt(scale), 0.55, 1.05)
 
     if (!this.still) this.time += delta
     const pt = this.pointer
@@ -226,7 +242,13 @@ export class ParticleSystem {
     pt.y += (pt.ty - pt.y) * k
     const sway = MathUtils.lerp(A.sway, B.sway, e)
     // Rest pose always faces the viewer; the twist only exists mid-morph.
-    pts.rotation.y = Math.sin(this.time * 0.35) * sway + Math.sin(Math.PI * p) * transition.twist +
+    // Leaving a `flow` section: particles stream horizontally toward the next
+    // shape, so the mid-morph twist is mostly dropped to keep the stream level.
+    const flowAmt = A.flow ?? 0
+    u.uFlow.value = flowAmt
+    u.uFlowDir.value = Math.sign(B.x - A.x) || -1
+    u.uDepth.value = MathUtils.lerp(A.depth ?? 0, B.depth ?? 0, e)
+    pts.rotation.y = Math.sin(this.time * 0.35) * sway + Math.sin(Math.PI * p) * transition.twist * (1 - flowAmt * 0.85) +
       pt.x * motion.pointerTilt
     pts.rotation.x = Math.sin(this.time * 0.27) * sway * 0.25 + pt.y * motion.pointerTilt * 0.5
 
@@ -241,7 +263,10 @@ export class ParticleSystem {
     u.uTime.value = this.time
     u.uStagger.value = transition.stagger
     u.uScatter.value = transition.scatter
-    u.uTurbulence.value = this.still ? 0 : motion.turbulence
+    u.uSweep.value = transition.sweep
+    u.uSettle.value = this.still ? 0 : this.settle.v * transition.settleSpread
+    u.uTurbulence.value = this.still ? 0 : motion.turbulence * MathUtils.lerp(A.idle ?? 1, B.idle ?? 1, e)
+    u.uTwinkle.value = MathUtils.lerp(A.twinkle ?? 0.2, B.twinkle ?? 0.2, e)
     u.uPixelRatio.value = pixelRatio
     const aspect = viewport.width / viewport.height
     u.uAspect.value = aspect
@@ -283,7 +308,7 @@ export class ParticleSystem {
   }
 
   dispose() {
-    gsap.killTweensOf([this.intro, this.fade])
+    gsap.killTweensOf([this.intro, this.fade, this.settle])
     this.geometry.dispose()
     this.material.dispose()
   }

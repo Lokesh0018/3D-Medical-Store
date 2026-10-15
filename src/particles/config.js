@@ -52,8 +52,16 @@ export const PARTICLE_CONFIG = {
     // Exponential damping rate used to scrub toward the scroll target.
     // Higher = tighter to the scrollbar, lower = floatier.
     smoothing: 3.4,
-    // Initial "cloud gathers into the first shape" intro.
+    // Initial "cloud gathers into the first shape" intro (route changes).
     introDuration: 2.0,
+    // First page load: particles start spread around the shape and converge
+    // into it over this many seconds (the hero cross assembles directly from
+    // particles; there is no static placeholder).
+    settleDuration: 2.0,
+    settleSpread: 2.4,
+    // Sideways (tangential) travel while particles are in flight, so a shape
+    // disperses along curved paths rather than straight out.
+    sweep: 0.75,
     // Dissolve duration when the route changes.
     routeFade: 0.35,
   },
@@ -102,16 +110,29 @@ export const PARTICLE_CONFIG = {
  * opacity— particle opacity for this section
  * sway   — amplitude (radians) of the gentle idle Y rotation
  * palette— key into PALETTES
+ * flow   — 0..1: leaving this section, particles stream horizontally toward
+ *          the next shape instead of scattering radially (default 0)
+ * depth  — 0..1: back particles render smaller and fainter, for volume
+ *          (default 0)
+ * idle   — multiplier on idle drift (motion.turbulence), default 1
+ * twinkle— 0..1 per-particle brightness flicker amplitude, default 0.2
  * mobile — overrides applied below `mobileBreakpoint`
  */
 export const SECTION_PRESETS = {
+  // `anchor`: x / y / scale are measured from the section's
+  // [data-particle-anchor] element (see ParticleScrollController), so the
+  // cross always fills the hero's reserved visual column at every breakpoint.
+  // The values here are only used until the first measurement.
   hero: {
-    shape: 'cross', x: 0.23, y: 0.02, scale: 1, opacity: 1, sway: 0.5, palette: 'cyan',
-    mobile: { x: 0, y: 0.25, scale: 0.58, opacity: 0.75 },
+    shape: 'cross', x: 0.23, y: 0.02, scale: 1, opacity: 1, sway: 0.22, palette: 'cyan', anchor: true,
+    // Hero-only: leave as a horizontal stream (flow), shade by depth, and keep
+    // the idle calm (half the drift, a faint twinkle) so edges stay precise.
+    flow: 1, depth: 1, idle: 0.5, twinkle: 0.08,
+    mobile: { x: 0, y: 0.3, scale: 0.4, opacity: 0.95, sway: 0.24 },
   },
   about: {
-    shape: 'dna', x: -0.26, y: 0, scale: 1, opacity: 0.95, sway: 0.25, palette: 'teal',
-    mobile: { x: 0.18, y: 0, scale: 0.7, opacity: 0.35 },
+    shape: 'dna', x: -0.26, y: -0.07, scale: 1, opacity: 0.95, sway: 0.25, palette: 'teal',
+    mobile: { x: 0.18, y: -0.05, scale: 0.7, opacity: 0.35 },
   },
   categories: {
     shape: 'molecule', x: 0.25, y: 0, scale: 0.85, opacity: 0.9, sway: 0.45, palette: 'blue',
@@ -146,6 +167,9 @@ export const SECTION_PRESETS = {
     mobile: { scale: 0.6, opacity: 0.5 },
   },
 }
+
+/** World-space height visible at z = 0 (the plane shapes are centred on). */
+export const WORLD_HEIGHT = 2 * PARTICLE_CONFIG.camera.z * Math.tan((PARTICLE_CONFIG.camera.fov * Math.PI) / 360)
 
 /** Resolve a preset by name, applying mobile overrides when needed. */
 export function resolvePreset(name, isMobile) {

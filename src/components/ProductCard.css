@@ -1,4 +1,9 @@
+/* ==========================================================================
+   Product Card: Industry-Grade Healthtech Aesthetics & Micro-interactions
+   ========================================================================== */
+
 .product-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--card);
@@ -6,11 +11,62 @@
   border-radius: var(--radius);
   overflow: hidden;
   color: var(--ink);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 1px 3px rgba(15, 31, 23, 0.04), 0 4px 12px -2px rgba(15, 31, 23, 0.03);
+  transition: 
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease;
 }
+
 .product-card:hover {
-  border-color: #bbe5c8;
-  box-shadow: 0 18px 40px -24px rgba(21, 83, 45, 0.22);
+  transform: translateY(-4px);
+  border-color: rgba(22, 163, 74, 0.45);
+  box-shadow: 
+    0 12px 32px -8px rgba(21, 83, 45, 0.16),
+    0 2px 8px -2px rgba(15, 31, 23, 0.04);
+}
+
+.product-card--bump {
+  animation: card-success-pulse 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes card-success-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.015) translateY(-3px); border-color: var(--green); }
+  100% { transform: scale(1); }
+}
+
+/* Media Wrap & Stage Pedestal */
+.product-card__media-wrap {
+  position: relative;
+  overflow: hidden;
+  background: #f8faf9;
+}
+.product-card__art-link {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Subtle gradient stage pedestal under the packaging */
+.product-card__pedestal {
+  position: absolute;
+  bottom: 8px;
+  left: 15%;
+  right: 15%;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(15, 31, 23, 0.14) 0%, rgba(15, 31, 23, 0.03) 50%, transparent 80%);
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+}
+.product-card:hover .product-card__pedestal {
+  transform: scale(1.12);
+  opacity: 0.85;
 }
 
 .product-art {
@@ -19,70 +75,58 @@
   display: grid;
   place-items: center;
   color: var(--green-ink);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.9), transparent 60%),
-    linear-gradient(135deg, #e7f8ec, #f0fdf4);
+    radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.95), transparent 70%),
+    linear-gradient(135deg, #f0fdf4 0%, #e8f7ee 100%);
 }
-.product-art--devices { background: radial-gradient(circle at 30% 20%, #fff, transparent 60%), linear-gradient(135deg, #e3efff, #e6e9ff); color: #2747a8; }
-.product-art--wellness { background: radial-gradient(circle at 30% 20%, #fff, transparent 60%), linear-gradient(135deg, #e6f7e8, #dff6f4); color: #1d7a3e; }
-.product-art--personal-care { background: radial-gradient(circle at 30% 20%, #fff, transparent 60%), linear-gradient(135deg, #e5f4ff, #f0e9ff); color: #3f51b5; }
-.product-art--baby-care { background: radial-gradient(circle at 30% 20%, #fff, transparent 60%), linear-gradient(135deg, #fff1e6, #fde8f1); color: #b5476b; }
-.product-art--first-aid { background: radial-gradient(circle at 30% 20%, #fff, transparent 60%), linear-gradient(135deg, #ffe9e9, #fff3e0); color: #b42318; }
-
-.product-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 18px 18px 20px;
-  flex: 1;
-}
-.product-card__cat {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--green-ink);
-}
-.product-card__name { font-size: 1.08rem; font-weight: 700; }
-.product-card__pack { color: var(--ink-2); font-size: 0.9rem; }
-.product-card__badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.product-card__foot {
-  margin-top: auto;
-  padding-top: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.product-card:hover .product-art {
+  transform: scale(1.05);
 }
 
-.product-card__name a { color: inherit; text-decoration: none; }
-.product-card__name a:hover { color: var(--green-ink); text-decoration: underline; }
-.product-card__art-link { display: block; width: 100%; height: 100%; }
-
-.product-card__media-wrap {
-  position: relative;
-  overflow: hidden;
+.product-art--devices { 
+  background: radial-gradient(circle at 50% 25%, #fff, transparent 70%), linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); 
+  color: #2563eb; 
+}
+.product-art--wellness { 
+  background: radial-gradient(circle at 50% 25%, #fff, transparent 70%), linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); 
+  color: #059669; 
+}
+.product-art--personal-care { 
+  background: radial-gradient(circle at 50% 25%, #fff, transparent 70%), linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%); 
+  color: #7c3aed; 
+}
+.product-art--baby-care { 
+  background: radial-gradient(circle at 50% 25%, #fff, transparent 70%), linear-gradient(135deg, #fff7ed 0%, #fce7f3 100%); 
+  color: #db2777; 
+}
+.product-art--first-aid { 
+  background: radial-gradient(circle at 50% 25%, #fff, transparent 70%), linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%); 
+  color: #dc2626; 
 }
 
+/* Quick View Hover Pill */
 .product-card__quick-btn {
   position: absolute;
-  bottom: 10px;
+  bottom: 12px;
   left: 50%;
-  transform: translateX(-50%) translateY(10px);
+  transform: translateX(-50%) translateY(12px);
   opacity: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(22, 163, 74, 0.3);
   color: var(--ink);
   font-size: 0.78rem;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  font-weight: 650;
+  box-shadow: 0 4px 16px rgba(15, 31, 23, 0.12);
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
   z-index: 2;
 }
 .product-card:hover .product-card__quick-btn,
@@ -91,33 +135,78 @@
   transform: translateX(-50%) translateY(0);
 }
 .product-card__quick-btn:hover {
-  background: var(--paper);
+  background: #ffffff;
   color: var(--green-ink);
+  border-color: var(--green);
 }
 
+/* Card Body & Content */
+.product-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px 18px;
+  flex: 1;
+}
 .product-card__meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
-.product-card__sub-hint {
+.product-card__cat {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #15803d;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green-ink);
+}
+.product-card__sub-hint {
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: #166534;
   background: #dcfce7;
   padding: 2px 7px;
   border-radius: 6px;
+  border: 1px solid #bbf7d0;
+}
+
+.product-card__name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.product-card__name-btn {
+  color: inherit;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  display: block;
+  transition: color 0.18s ease;
+}
+.product-card__name-btn:hover {
+  color: var(--green-ink);
+}
+
+.product-card__pack {
+  color: var(--ink-2);
+  font-size: 0.86rem;
 }
 
 .product-card__salt {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--ink-2);
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  background: #f1f5f9;
+  background: #f8fafc;
   padding: 3px 8px;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
@@ -125,19 +214,151 @@
 .product-card__salt svg {
   display: inline-block;
   vertical-align: -2px;
-  margin-right: 3px;
+  margin-right: 4px;
   color: var(--green-ink);
 }
 
-.product-art img { width: 100%; height: 100%; object-fit: cover; }
-.product-art--photo { background: #fff; }
+/* Badges: High Contrast Clinical Rx vs OTC */
+.product-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.badge--rx-clinical {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  font-size: 0.74rem;
+  font-weight: 750;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.badge--otc {
+  display: inline-flex;
+  align-items: center;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  font-size: 0.74rem;
+  font-weight: 650;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.badge--cold-chain {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.badge--cold-chain svg {
+  color: #0284c7;
+}
+.badge--in-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f8faf9;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.stock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+}
 
-/* ---------- Price ---------- */
+/* Card Foot & Stepper */
+.product-card__foot {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.product-card__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-inline: 14px;
+  font-weight: 650;
+  border-radius: 999px;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.product-card__add-btn:hover {
+  transform: scale(1.03);
+}
+
+/* Direct Inline Quantity Stepper */
+.product-card__stepper {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #f0fdf4;
+  border: 1.5px solid var(--green);
+  box-shadow: 0 2px 8px -2px rgba(22, 163, 74, 0.25);
+  overflow: hidden;
+  height: 34px;
+}
+.product-card__step-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--green-ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+.product-card__step-btn:hover {
+  background: rgba(22, 163, 74, 0.16);
+}
+.product-card__step-btn:active {
+  transform: scale(0.9);
+}
+.product-card__step-val {
+  min-width: 26px;
+  text-align: center;
+  font-weight: 750;
+  font-size: 0.9rem;
+  color: var(--ink);
+  padding: 0 4px;
+}
+
+.product-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.product-card:hover .product-art img {
+  transform: scale(1.05);
+}
+
+/* Price styling */
 .price-tag {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 2px 8px;
+  gap: 2px 6px;
 }
 .price-tag__price {
   font-family: var(--font-head);
@@ -145,6 +366,5 @@
   font-size: 1.25rem;
   color: var(--ink);
 }
-.price-tag--lg .price-tag__price { font-size: 2rem; }
-.price-tag__mrp { color: var(--ink-2); font-size: 0.875rem; }
-.price-tag__off { color: var(--ok-ink); font-size: 0.8rem; font-weight: 700; }
+.price-tag__mrp { color: var(--ink-2); font-size: 0.85rem; }
+.price-tag__off { color: var(--ok-ink); font-size: 0.78rem; font-weight: 750; }
