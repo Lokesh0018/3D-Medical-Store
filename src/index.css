@@ -33,6 +33,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
   scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
 }

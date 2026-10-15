@@ -2,9 +2,9 @@ import { BufferAttribute, BufferGeometry, Color, DynamicDrawUsage, MathUtils, Po
 import { gsap } from 'gsap'
 import { PALETTES, PARTICLE_CONFIG } from './config.js'
 import { getShape } from './shapes.js'
-import { createParticleMaterial } from './particleMaterial.js'
+import { MAX_RIPPLES, createParticleMaterial } from './particleMaterial.js'
 
-const { transition, motion } = PARTICLE_CONFIG
+const { transition, motion, ripple } = PARTICLE_CONFIG
 const smooth = (t) => t * t * (3 - 2 * t)
 
 // Preallocated palette colours — nothing is allocated inside the frame loop.
@@ -67,6 +67,8 @@ export class ParticleSystem {
     this.intro = { v: 0 }
     this.fade = { v: 0 }
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 }
+    // Hover ripple state. nx/ny are NDC (y up); last* is the previous spawn.
+    this.hover = { nx: 0, ny: 0, inside: false, strength: 0, lastX: 0, lastY: 0, lastT: -Infinity, next: 0 }
     this.perf = { frames: 0, elapsed: 0, warmup: 3, degraded: 0 }
     // Reduced-motion mode: hold shapes without intro, drift, morph or parallax.
     this.still = false
@@ -84,6 +86,34 @@ export class ParticleSystem {
   setPointer(nx, ny) {
     this.pointer.tx = nx
     this.pointer.ty = ny
+    this.hover.nx = nx
+    this.hover.ny = -ny
+    this.hover.inside = true
+  }
+
+  /** The cursor left the window: let the hover field fade out. */
+  clearPointer() {
+    this.hover.inside = false
+  }
+
+  /** Emit ripple rings as the cursor travels, and ease the hover field. */
+  #updateRipples(u, aspect, delta) {
+    const h = this.hover
+    const target = h.inside && !this.still ? 1 : 0
+    h.strength += (target - h.strength) * (1 - Math.exp(-delta * 6))
+    const x = h.nx * aspect
+    const y = h.ny
+    u.uPointer.value.set(x, y, h.strength)
+    if (!h.inside || this.still) return
+    const moved = Math.hypot(x - h.lastX, y - h.lastY)
+    if (moved < ripple.spawnDistance || this.time - h.lastT < ripple.spawnInterval) return
+    // Faster sweeps make stronger rings; a nudge still makes a gentle one.
+    const strength = MathUtils.clamp(moved / (ripple.spawnDistance * 3), 0.45, 1)
+    u.uRipples.value[h.next].set(x, y, this.time, strength)
+    h.next = (h.next + 1) % MAX_RIPPLES
+    h.lastX = x
+    h.lastY = y
+    h.lastT = this.time
   }
 
   /** Point the system at a (new) set of sections. */
@@ -213,6 +243,11 @@ export class ParticleSystem {
     u.uScatter.value = transition.scatter
     u.uTurbulence.value = this.still ? 0 : motion.turbulence
     u.uPixelRatio.value = pixelRatio
+    const aspect = viewport.width / viewport.height
+    u.uAspect.value = aspect
+    u.uRippleShape.value.set(ripple.life, ripple.speed, ripple.width, ripple.amplitude)
+    u.uHoverShape.value.set(ripple.hoverRadius, ripple.hoverPush)
+    this.#updateRipples(u, aspect, delta)
     return true
   }
 

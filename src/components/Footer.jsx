@@ -7,7 +7,7 @@ import './Footer.css'
 
 export default function Footer() {
   return (
-    <ParticleSection as="footer" preset="footer" className="site-footer">
+    <ParticleSection as="footer" id="contact" preset="footer" className="site-footer">
       <div className="container site-footer__grid">
         <div className="site-footer__brand">
           <Link to="/" className="brand">

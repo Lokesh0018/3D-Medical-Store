@@ -36,15 +36,21 @@ export default function ParticleField({ controllerRef, tier, still = false, onRe
     }
   }, [still, system, invalidate, controllerRef])
 
-  // Pointer parallax on fine pointers only; touch devices get no listeners.
+  // Pointer parallax and hover ripple on fine pointers only; touch devices
+  // get no listeners.
   useEffect(() => {
     if (still || !window.matchMedia('(pointer: fine)').matches) return
     const onMove = (e) => system.setPointer(
       (e.clientX / window.innerWidth) * 2 - 1,
       (e.clientY / window.innerHeight) * 2 - 1,
     )
+    const onLeave = () => system.clearPointer()
     window.addEventListener('pointermove', onMove, { passive: true })
-    return () => window.removeEventListener('pointermove', onMove)
+    document.documentElement.addEventListener('pointerleave', onLeave)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      document.documentElement.removeEventListener('pointerleave', onLeave)
+    }
   }, [system, still])
 
   useEffect(() => {

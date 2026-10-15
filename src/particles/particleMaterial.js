@@ -1,4 +1,4 @@
-import { Color, NormalBlending, ShaderMaterial } from 'three'
+import { Color, NormalBlending, ShaderMaterial, Vector2, Vector3, Vector4 } from 'three'
 
 /**
  * Particle morph shader.
@@ -14,10 +14,19 @@ import { Color, NormalBlending, ShaderMaterial } from 'three'
  *     zero at p = 0 and p = 1, so segment boundaries are seamless.
  *  3. Idle turbulence — a cheap sum-of-sines flow keeps formed shapes alive
  *     with sub-pixel drift (scaled by uTurbulence).
- *  4. Soft point sprites with normal alpha blending read as
+ *  4. Hover ripple — in screen space, so it tracks the cursor whatever the
+ *     shape's rotation, scale or offset: expanding rings (a small ring buffer
+ *     of uniforms) push particles outward on their wavefront, and a soft
+ *     field parts particles around the cursor. Affected particles swell and
+ *     shift toward the accent colour.
+ *  5. Soft point sprites with normal alpha blending read as
  *     tinted dots on the light page, without any post-processing pass.
  */
+export const MAX_RIPPLES = 6
+
 const vertexShader = /* glsl */ `
+  #define MAX_RIPPLES ${MAX_RIPPLES}
+
   attribute vec4 aFrom;   // xyz target A + accent
   attribute vec4 aTo;     // xyz target B + accent
   attribute vec4 aRand;   // x: delay, y: size, z: phase, w: brightness
@@ -34,6 +43,11 @@ const vertexShader = /* glsl */ `
   uniform vec3 uColorA;
   uniform vec3 uColorB;
   uniform vec3 uAccent;
+  uniform vec4 uRipples[MAX_RIPPLES]; // xy: screen pos, z: start time, w: strength
+  uniform vec4 uRippleShape;          // x: life, y: speed, z: width, w: amplitude
+  uniform vec3 uPointer;              // xy: screen pos, z: hover strength (0..1)
+  uniform vec2 uHoverShape;           // x: radius, y: push
+  uniform float uAspect;
 
   varying vec3 vColor;
   varying float vAlpha;
@@ -59,19 +73,44 @@ const vertexShader = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
 
+    // Hover ripple, in aspect-corrected screen space (x scaled by aspect).
+    vec2 sp = gl_Position.xy / gl_Position.w;
+    sp.x *= uAspect;
+    vec2 push = vec2(0.0);
+    float lift = 0.0;
+    for (int i = 0; i < MAX_RIPPLES; i++) {
+      vec4 r = uRipples[i];
+      float age = uTime - r.z;
+      if (r.w <= 0.0 || age < 0.0 || age > uRippleShape.x) continue;
+      vec2 d = sp - r.xy;
+      float dist = length(d);
+      float band = (dist - age * uRippleShape.y) / uRippleShape.z;
+      float fade = 1.0 - age / uRippleShape.x;
+      float wave = exp(-band * band) * fade * fade * r.w;
+      push += d / max(dist, 1e-4) * wave * uRippleShape.w;
+      lift += wave;
+    }
+    vec2 dp = sp - uPointer.xy;
+    float pd = length(dp);
+    float hover = smoothstep(uHoverShape.x, 0.0, pd) * uPointer.z;
+    push += dp / max(pd, 1e-4) * hover * uHoverShape.y;
+    lift = min(lift + hover * 0.4, 1.0);
+    push.x /= uAspect;
+    gl_Position.xy += push * gl_Position.w;
+
     float depth = -mv.z;
     gl_PointSize = uSize * (0.45 + aRand.y * 0.9) * uPixelRatio * (1.0 - flight * 0.25) / max(depth, 0.5);
     // Cap sprite size so particles passing close to the camera stay crisp dots.
-    gl_PointSize = min(gl_PointSize, 14.0 * uPixelRatio);
+    gl_PointSize = min(gl_PointSize, 14.0 * uPixelRatio) * (1.0 + lift * 0.25);
 
     float accent = mix(aFrom.w, aTo.w, e);
     vec3 base = mix(uColorA, uColorB, aRand.w);
-    vColor = mix(base, uAccent, accent * 0.7);
+    vColor = mix(mix(base, uAccent, accent * 0.7), uAccent, lift * 0.3);
 
     // Gentle twinkle (never below 80%) and depth fade keep motion calm.
     float twinkle = 0.8 + 0.2 * sin(uTime * 1.3 + phase);
     float fog = smoothstep(18.0, 6.0, depth);
-    vAlpha = uOpacity * (0.45 + 0.55 * aRand.w) * twinkle * fog;
+    vAlpha = min(uOpacity * (0.45 + 0.55 * aRand.w) * twinkle * fog * (1.0 + lift * 0.3), 1.0);
   }
 `
 
@@ -109,6 +148,11 @@ export function createParticleMaterial({ size, pixelRatio }) {
       uColorA: { value: new Color() },
       uColorB: { value: new Color() },
       uAccent: { value: new Color() },
+      uRipples: { value: Array.from({ length: MAX_RIPPLES }, () => new Vector4(0, 0, 0, 0)) },
+      uRippleShape: { value: new Vector4() },
+      uPointer: { value: new Vector3() },
+      uHoverShape: { value: new Vector2() },
+      uAspect: { value: 1 },
     },
   })
 }

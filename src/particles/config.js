@@ -65,6 +65,24 @@ export const PARTICLE_CONFIG = {
     pointerTilt: 0.22,
   },
 
+  // Hover ripple (fine pointers only, disabled for reduced motion). Distances
+  // are in aspect-corrected screen units, where 1 = half the viewport height.
+  ripple: {
+    // Seconds a ring lives, and how fast its wavefront expands.
+    life: 1.1,
+    speed: 0.55,
+    // Thickness of the wavefront band.
+    width: 0.065,
+    // Peak outward displacement of particles on the wavefront.
+    amplitude: 0.024,
+    // A new ring spawns after the cursor travels this far, at most this often.
+    spawnDistance: 0.12,
+    spawnInterval: 0.22,
+    // Radius and strength of the soft push around the resting cursor.
+    hoverRadius: 0.16,
+    hoverPush: 0.016,
+  },
+
   // ScrollTrigger window for the morph INTO a section's shape: begins as the
   // section's top enters the viewport and completes before the section reaches
   // its main focus. `clamp()` keeps short trailing sections (the footer)

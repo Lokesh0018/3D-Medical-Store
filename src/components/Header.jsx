@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { STORE } from '../data/store.js'
 import Icon from './Icon.jsx'
 import './Header.css'
 
 const NAV = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/products', label: 'Products' },
-  { to: '/#services', label: 'Services', hash: true },
-  { to: '/contact', label: 'Contact' },
+  { targetId: 'hero', label: 'Home' },
+  { targetId: 'about', label: 'About' },
+  { targetId: 'products', label: 'Products' },
+  { targetId: 'services', label: 'Services' },
+  { targetId: 'contact', label: 'Contact' },
 ]
 
 export default function Header() {
@@ -17,7 +18,29 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onLight, setOnLight] = useState(false)
+  const [activeSection, setActiveSection] = useState('hero')
   const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  // Track active section as user scrolls
+  useEffect(() => {
+    const handleObserver = () => {
+      const ids = NAV.map((n) => n.targetId)
+      for (const id of [...ids].reverse()) {
+        const el = document.getElementById(id)
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top <= 140) {
+            setActiveSection(id)
+            break
+          }
+        }
+      }
+    }
+    window.addEventListener('scroll', handleObserver, { passive: true })
+    handleObserver()
+    return () => window.removeEventListener('scroll', handleObserver)
+  }, [])
 
   // Track scroll state and whether the header currently sits over a light
   // section, so it can switch to a light, high-contrast variant there.
@@ -52,12 +75,43 @@ export default function Header() {
 
   const close = () => setMenuOpen(false)
 
+  const scrollTo = (targetId) => {
+    close()
+    if (pathname !== '/') {
+      navigate(`/#${targetId}`)
+      return
+    }
+    const el = document.getElementById(targetId)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+      try {
+        window.history.pushState(null, '', `#${targetId}`)
+      } catch {
+        /* ignore */
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
     <>
       <header className={`site-header${scrolled || menuOpen ? ' is-solid' : ''}${onLight && !menuOpen ? ' is-light' : ''}`}>
         <a className="skip-link" href="#main">Skip to content</a>
         <div className="site-header__inner container">
-          <Link to="/" className="brand" onClick={close} aria-label={`${STORE.name} home`}>
+          <Link
+            to="/"
+            className="brand"
+            onClick={(e) => {
+              if (pathname === '/') {
+                e.preventDefault()
+                scrollTo('hero')
+              } else {
+                close()
+              }
+            }}
+            aria-label={`${STORE.name} home`}
+          >
             <span className="brand__mark"><Icon name="cross" size={18} strokeWidth={2} /></span>
             <span className="brand__name">{STORE.name}</span>
           </Link>
@@ -70,11 +124,16 @@ export default function Header() {
             <ul>
               {NAV.map((item) => (
                 <li key={item.label}>
-                  {item.hash ? (
-                    <Link to={item.to} onClick={close}>{item.label}</Link>
-                  ) : (
-                    <NavLink to={item.to} end={item.end} onClick={close}>{item.label}</NavLink>
-                  )}
+                  <a
+                    href={`#${item.targetId}`}
+                    className={activeSection === item.targetId ? 'active' : ''}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      scrollTo(item.targetId)
+                    }}
+                  >
+                    {item.label}
+                  </a>
                 </li>
               ))}
             </ul>

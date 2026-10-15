@@ -17,7 +17,7 @@ export default function ScrollManager() {
     if (hash) {
       const el = document.getElementById(hash.slice(1))
       if (el) {
-        el.scrollIntoView()
+        el.scrollIntoView({ behavior: 'smooth' })
         return
       }
     }

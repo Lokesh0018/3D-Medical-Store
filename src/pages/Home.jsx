@@ -61,7 +61,7 @@ export default function Home() {
   return (
     <>
       {/* Hero — particles gather into a medical cross */}
-      <ParticleSection preset="hero" className="hero section--dark" aria-labelledby="hero-title">
+      <ParticleSection preset="hero" id="hero" className="hero section--dark" aria-labelledby="hero-title">
         <div className="container hero__inner">
           <div className="hero__copy">
             <p className="eyebrow"><span className="eyebrow__dot" /> {STORE.tagline}</p>
@@ -148,7 +148,7 @@ export default function Home() {
       </ParticleSection>
 
       {/* Featured products — light, opaque section: particles stay out of the way */}
-      <section className="section--light featured" aria-labelledby="featured-title">
+      <section id="products" className="section--light featured" aria-labelledby="featured-title">
         <div className="container">
           <div className="section-head">
             <div>
