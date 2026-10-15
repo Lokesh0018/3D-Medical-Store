@@ -725,57 +725,240 @@
 .section-head .section-title { margin-bottom: 0; }
 
 /* ---------- Services ---------- */
-.services { padding-block: clamp(96px, 12vw, 160px); }
-.services__head { text-align: center; max-width: 640px; margin-inline: auto; }
-.services__pulse { height: clamp(160px, 24vw, 300px); }
+.services { padding-block: clamp(88px, 10vw, 136px); }
+.services__head { position: relative; text-align: center; max-width: 660px; margin-inline: auto; }
+/* The heartbeat is fixed to the viewport, so it passes behind the heading as
+   the page scrolls; a soft white backdrop keeps the text crisp over it. */
+.services__head::before {
+  content: '';
+  position: absolute;
+  inset: -28px -48px;
+  z-index: -1;
+  background: radial-gradient(ellipse 70% 65% at 50% 50%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6) 65%, transparent);
+  pointer-events: none;
+}
+.services__head .eyebrow { justify-content: center; }
+.services__title {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin-bottom: 14px;
+  text-wrap: balance;
+}
+.services__lead {
+  color: var(--muted);
+  font-size: clamp(1rem, 0.3vw + 0.92rem, 1.1rem);
+  max-width: 34rem;
+  margin-inline: auto;
+}
+/* Reserved band for the particle heartbeat. */
+.services__pulse { height: clamp(150px, 20vw, 250px); }
+
 .service-grid {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
 }
-.service-card { padding: 24px; }
-.service-card h3 { font-size: 1.1rem; margin: 14px 0 8px; }
-.service-card p { color: var(--muted); font-size: 0.95rem; }
+.service-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgba(15, 31, 23, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.service-card:hover {
+  border-color: #bfe0cb;
+  box-shadow: 0 14px 34px -22px rgba(21, 128, 61, 0.35);
+}
+.service-card h3 { font-size: 1.08rem; margin: 16px 0 8px; }
+.service-card > p { color: var(--muted); font-size: 0.93rem; line-height: 1.6; margin-bottom: 18px; }
 .service-card__icon {
   display: grid;
   place-items: center;
   width: 44px; height: 44px;
   border-radius: 12px;
   color: var(--green);
-  background: rgba(22, 163, 74, 0.12);
+  background: #ecf8f0;
 }
-
-/* ---------- Order steps ---------- */
-.steps {
-  counter-reset: step;
-  list-style: none;
+/* Footer: one concrete detail, then the next step. Pinned to the bottom so
+   actions line up across cards of different text lengths. */
+.service-card__foot {
   display: grid;
-  gap: 16px;
-  margin: 8px 0 30px;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
 }
-.steps li {
-  counter-increment: step;
-  display: grid;
-  grid-template-columns: 36px 1fr;
-  gap: 14px;
+.service-card__detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+.service-card__detail svg { color: var(--green); flex-shrink: 0; margin-top: 2px; }
+.service-card__countdown { justify-self: start; }
+.service-card__foot:has(.service-card__countdown) { padding-top: 14px; border-top: 1px solid var(--line); margin-top: auto; }
+.service-card__action {
+  justify-self: start;
+  display: inline-flex;
   align-items: center;
-  color: var(--muted);
+  gap: 6px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--green-ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
 }
-.steps li::before {
-  content: counter(step);
+.service-card__action svg { transition: transform 0.2s ease; }
+.service-card__action:hover { text-decoration: underline; text-underline-offset: 4px; }
+.service-card__action:hover svg { transform: translateX(3px); }
+/* The live countdown inherits dark-theme rules from .section--dark; keep its
+   figures dark green for contrast on white. */
+.services .delivery-countdown { background: #f3faf6; border-color: #d3eadb; color: var(--ink); }
+.services .delivery-countdown strong,
+.services .delivery-countdown .delivery-countdown__icon { color: var(--green-ink); }
+
+/* Practical details: an open three-column row (no cards), split by rules. */
+.service-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: clamp(40px, 5vw, 64px) 0 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.service-facts__item { padding-inline: clamp(16px, 2.5vw, 32px); }
+.service-facts__item:first-child { padding-left: 0; }
+.service-facts__item:last-child { padding-right: 0; }
+.service-facts__item + .service-facts__item { border-left: 1px solid var(--line); }
+.service-facts dt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+.service-facts__icon {
   display: grid;
   place-items: center;
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
   border-radius: 50%;
-  font-weight: 700;
-  color: #ffffff;
-  background: var(--green);
+  color: var(--green);
+  background: #ecf8f0;
 }
-.steps strong { color: var(--text); }
+.service-facts dd { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+.service-facts__hours { list-style: none; display: grid; gap: 4px; margin-bottom: 12px; }
+.service-facts__hours li { display: flex; justify-content: space-between; gap: 12px; }
+.service-facts__hours li span:last-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.services .open-status { background: #fff; border-color: var(--line); }
+.services .open-status.is-open { color: var(--ok-ink); }
+.services .open-status.is-closed { color: var(--danger-ink); }
+
+/* ---------- How to order (open layout beside the capsule) ---------- */
+.order { max-width: 560px; }
+.order__title {
+  font-size: clamp(2rem, 3.6vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin-bottom: 26px;
+}
+/* Numbered timeline: circles joined by a thin rule. */
+.order-steps { list-style: none; display: grid; margin-bottom: 30px; }
+.order-steps > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 16px;
+  padding-bottom: 24px;
+}
+.order-steps > li:last-child { padding-bottom: 0; }
+.order-steps > li:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 19.5px;
+  top: 44px;
+  bottom: 4px;
+  width: 1px;
+  background: #cfe3d6;
+}
+.order-steps__num {
+  display: grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 700;
+}
+.order-steps h3 { font-size: 1.05rem; margin: 8px 0 4px; }
+.order-steps p { color: var(--muted); font-size: 0.95rem; }
+.order-steps__channels {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.order-steps__channels li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #f1f9f4;
+  border: 1px solid #d3eadb;
+  color: var(--green-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.order__ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+.order__call { margin-top: 14px; color: var(--muted); font-size: 0.92rem; }
+.order__call a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--green-ink);
+  font-weight: 650;
+  text-decoration: none;
+}
+.order__call a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.order__tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f6fbf8;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+.order__tip svg { color: var(--green); flex-shrink: 0; margin-top: 3px; }
+.order__tip strong { color: var(--ink); }
 
 @media (max-width: 1000px) {
-  .service-grid { grid-template-columns: repeat(2, 1fr); }
+  .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .service-facts { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .service-facts__item { padding-inline: 0; }
+  .service-facts__item + .service-facts__item { border-left: 0; padding-top: 22px; border-top: 1px solid var(--line); }
 }
 @media (max-width: 767px) {
   .split { min-height: auto; }
@@ -801,8 +984,33 @@
   }
   .category-card__icon { grid-row: auto; width: 40px; height: 40px; }
   .category-card__blurb { display: none; }
-  .services__pulse { height: 200px; }
-  .service-grid { grid-template-columns: 1fr; }
+  .services__pulse { height: 170px; }
+  .service-grid { grid-template-columns: minmax(0, 1fr); }
+  /* Compact cards on phones: icon beside the title, tighter padding. */
+  .service-card {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: center;
+    padding: 18px;
+  }
+  .service-card__icon { width: 40px; height: 40px; }
+  .service-card h3 { margin: 0; }
+  .service-card > p,
+  .service-card__foot { grid-column: 1 / -1; }
+  .service-card > p { margin: 12px 0 14px; }
+  .service-card__foot { padding-top: 0; gap: 4px; }
+  /* The capsule sits behind the copy on phones: a soft wash keeps text crisp. */
+  .order { position: relative; }
+  .order::before {
+    content: '';
+    position: absolute;
+    inset: -24px -16px;
+    z-index: -1;
+    background: radial-gradient(ellipse 80% 70% at 40% 50%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6) 70%, transparent);
+    pointer-events: none;
+  }
+  .order__ctas .btn { flex: 1 1 100%; }
 }
 
 /* ---------- Chip buttons in hero search ---------- */
@@ -1088,6 +1296,86 @@
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+/* ---------- Catalog Show More / Pagination Area ---------- */
+.catalog__show-more-wrap {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 24px;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(240, 253, 244, 0.5) 100%);
+  border: 1px solid var(--line);
+}
+
+.catalog__show-more-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  color: var(--ink-2);
+  font-size: 0.95rem;
+}
+
+.catalog__show-more-count strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.catalog__progress-bar {
+  width: min(320px, 80vw);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(15, 31, 23, 0.08);
+  overflow: hidden;
+}
+
+.catalog__progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--green) 0%, var(--green-2) 100%);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.catalog__show-more-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.catalog__show-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 18px -4px rgba(22, 163, 74, 0.35);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+.catalog__show-more-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px rgba(22, 163, 74, 0.45);
+}
+.catalog__show-more-btn svg {
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+}
+.catalog__show-more-btn:hover svg {
+  transform: rotate(90deg) translateX(2px);
+}
+
+.catalog__show-less-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: 0.92rem;
+  background: #fff;
 }
 
 /* ---------- Contact Section on Home ---------- */

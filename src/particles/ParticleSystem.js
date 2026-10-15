@@ -278,7 +278,12 @@ export class ParticleSystem {
     u.uColorB.value.lerpColors(ca.b, cb.b, e)
     u.uAccent.value.lerpColors(ca.accent, cb.accent, e)
     const flight = Math.sin(Math.PI * p)
-    u.uOpacity.value = MathUtils.lerp(A.opacity, B.opacity, e) * this.fade.v * (1 - transition.flightDim * flight)
+    const exitFade = controller.getExitFade ? controller.getExitFade() : 1
+    const baseOpacity = MathUtils.lerp(A.opacity, B.opacity, e) * this.fade.v * (1 - transition.flightDim * flight) * exitFade
+    u.uOpacity.value = baseOpacity
+
+    // Optimization: Hide point mesh entirely when scrolled past last particle section
+    this.points.visible = baseOpacity > 0.001
     u.uProgress.value = p
     u.uTime.value = this.time
     u.uStagger.value = transition.stagger

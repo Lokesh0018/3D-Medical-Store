@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import ParticleSection from '../particles/ParticleSection.jsx'
 import { CATEGORIES } from '../data/products.js'
 import { STORE, hoursText, whatsappLink } from '../data/store.js'
 import Icon from './Icon.jsx'
@@ -7,7 +6,7 @@ import './Footer.css'
 
 export default function Footer() {
   return (
-    <ParticleSection as="footer" id="site-footer" preset="footer" className="site-footer">
+    <footer id="site-footer" className="site-footer">
       <div className="container site-footer__grid">
         <div className="site-footer__brand">
           <Link to="/" className="brand">
@@ -61,6 +60,6 @@ export default function Footer() {
         <p>Prescription medicines are dispensed only against a valid prescription. Information on this site is not a substitute for medical advice.</p>
         <p>© {new Date().getFullYear()} {STORE.name}</p>
       </div>
-    </ParticleSection>
+    </footer>
   )
 }

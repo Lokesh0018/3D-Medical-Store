@@ -14,7 +14,38 @@ import DeliveryCountdown from '../components/DeliveryCountdown.jsx'
 import { pharmacySchema } from '../seo/structuredData.js'
 import './Home.css'
 
-const POPULAR_SEARCHES = ['Paracetamol', 'ORS', 'Thermometer', 'Vitamin C']
+/**
+ * Per-service footer: one concrete detail and a direct next step. Details come
+ * from store data only (no invented claims); 'countdown' renders the live
+ * delivery estimate.
+ */
+const SERVICE_EXTRAS = {
+  prescriptions: {
+    detailIcon: 'check',
+    detail: `Checked by ${STORE.pharmacist.name}, ${STORE.pharmacist.qualification.split(' · ')[0]}`,
+    action: 'rx',
+    label: 'Upload prescription',
+  },
+  delivery: {
+    detail: 'countdown',
+    label: 'Check your area',
+    message: 'Hello, do you deliver to my area? My address is: ',
+  },
+  'order-ahead': {
+    detailIcon: 'clock',
+    detail: `Counter open ${STORE.hours[0].label}, ${hoursText(STORE.hours[0])}`,
+    label: 'Send your list',
+    message: 'Hello, I would like to order ahead for pickup. My list: ',
+  },
+  advice: {
+    detailIcon: 'chat',
+    detail: 'In store or on WhatsApp',
+    label: 'Ask a pharmacist',
+    message: 'Hello, I have a question about my medicines.',
+  },
+}
+
+const POPULAR_SEARCHES =['Paracetamol', 'ORS', 'Thermometer', 'Vitamin C']
 const ABOUT_POINTS = [
   { icon: 'shield', title: 'Genuine stock', body: 'Medicines sourced only from authorised distributors.' },
   { icon: 'rx', title: 'Pharmacist-checked', body: 'Every prescription reviewed by a registered pharmacist.' },
@@ -71,6 +102,7 @@ export default function Home() {
   const [sortBy, setSortBy] = useState('featured')
   const [stockOnly, setStockOnly] = useState(false)
   const [rxFilter, setRxFilter] = useState('all') // 'all', 'otc', 'rx'
+  const [showAllProducts, setShowAllProducts] = useState(false)
   const searchInputRef = useRef(null)
 
   // Contact form state
@@ -118,6 +150,7 @@ export default function Home() {
 
   const handleCategorySelect = (catId) => {
     setCategory(catId)
+    setShowAllProducts(false)
     scrollTo('products')
   }
 
@@ -127,6 +160,7 @@ export default function Home() {
     setStockOnly(false)
     setRxFilter('all')
     setSortBy('featured')
+    setShowAllProducts(false)
   }
 
   // Filtered & sorted products list
@@ -157,6 +191,13 @@ export default function Home() {
 
     return list
   }, [category, query, stockOnly, rxFilter, sortBy])
+
+  // Initial limit: 8 products; "Show More" expands to full list
+  const INITIAL_PRODUCT_LIMIT = 8
+  const hasMoreProducts = filteredProducts.length > INITIAL_PRODUCT_LIMIT
+  const displayedProducts = showAllProducts
+    ? filteredProducts
+    : filteredProducts.slice(0, INITIAL_PRODUCT_LIMIT)
 
   return (
     <>
@@ -628,17 +669,61 @@ export default function Home() {
             )}
           </div>
 
-          {/* Product grid */}
+          {/* Product grid with 8 items initial limit + Show More toggle */}
           {filteredProducts.length > 0 ? (
-            <div className="product-grid">
-              {filteredProducts.map((p) => (
-                <ProductCard
-                  key={p.id}
-                  product={p}
-                  onQuickView={(prod) => setQuickProduct(prod)}
-                />
-              ))}
-            </div>
+            <>
+              <div className="product-grid" role="region" aria-label="Products Catalogue">
+                {displayedProducts.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onQuickView={(prod) => setQuickProduct(prod)}
+                  />
+                ))}
+              </div>
+
+              {/* Show More / Show Less Action Area */}
+              {hasMoreProducts && (
+                <div className="catalog__show-more-wrap">
+                  <div className="catalog__show-more-count">
+                    <span>
+                      Showing <strong>{displayedProducts.length}</strong> of <strong>{filteredProducts.length}</strong> products
+                    </span>
+                    <div className="catalog__progress-bar" role="progressbar" aria-valuenow={displayedProducts.length} aria-valuemin="0" aria-valuemax={filteredProducts.length}>
+                      <span
+                        className="catalog__progress-fill"
+                        style={{ width: `${Math.round((displayedProducts.length / filteredProducts.length) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="catalog__show-more-actions">
+                    {!showAllProducts ? (
+                      <button
+                        type="button"
+                        className="btn btn--primary btn--lg catalog__show-more-btn"
+                        onClick={() => setShowAllProducts(true)}
+                      >
+                        <span>Show All {filteredProducts.length} Products</span>
+                        <Icon name="arrow" size={16} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn--outline catalog__show-less-btn"
+                        onClick={() => {
+                          setShowAllProducts(false)
+                          document.getElementById('products-catalog-title')?.scrollIntoView({ behavior: 'smooth' })
+                        }}
+                      >
+                        <span>Show Less (Show first 8)</span>
+                        <Icon name="close" size={14} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="catalog__empty">
               <Icon name="search" size={48} className="catalog__empty-icon" />
@@ -666,48 +751,127 @@ export default function Home() {
       <ParticleSection preset="services" id="services" className="services section--dark" aria-labelledby="services-title">
         <div className="container">
           <div className="services__head">
-            <p className="eyebrow">Services &amp; delivery</p>
-            <h2 id="services-title" className="section-title">Care that keeps pace with you</h2>
+            <p className="eyebrow"><span className="eyebrow__dot" aria-hidden="true" />Services &amp; delivery</p>
+            <h2 id="services-title" className="services__title">Care that keeps pace with you</h2>
+            <p className="services__lead">
+              From checking your prescription to bringing it to your door, every order goes through our pharmacist.
+            </p>
           </div>
           <div className="services__pulse" aria-hidden="true" />
           <ul className="service-grid">
-            {SERVICES.map((s) => (
-              <li key={s.id} className="service-card glass-panel">
-                <span className="service-card__icon"><Icon name={s.icon} size={22} /></span>
-                <h3>{s.title}</h3>
-                <p>{s.body}</p>
-              </li>
-            ))}
+            {SERVICES.map((s) => {
+              const extra = SERVICE_EXTRAS[s.id]
+              return (
+                <li key={s.id} className="service-card">
+                  <span className="service-card__icon" aria-hidden="true"><Icon name={s.icon} size={22} /></span>
+                  <h3>{s.title}</h3>
+                  <p>{s.body}</p>
+                  {extra && (
+                    <div className="service-card__foot">
+                      {extra.detail === 'countdown'
+                        ? <DeliveryCountdown compact className="service-card__countdown" />
+                        : <span className="service-card__detail"><Icon name={extra.detailIcon} size={14} /> {extra.detail}</span>}
+                      {extra.action === 'rx' ? (
+                        <button type="button" className="service-card__action" onClick={() => setRxModalOpen(true)}>
+                          {extra.label} <Icon name="arrow" size={15} />
+                        </button>
+                      ) : (
+                        <a
+                          className="service-card__action"
+                          href={whatsappLink(extra.message)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${extra.label} on WhatsApp (opens in a new tab)`}
+                        >
+                          {extra.label} <Icon name="arrow" size={15} />
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </li>
+              )
+            })}
           </ul>
+
+          {/* Practical details people check before ordering. */}
+          <dl className="service-facts">
+            <div className="service-facts__item">
+              <dt><span className="service-facts__icon" aria-hidden="true"><Icon name="clock" size={18} /></span> Store hours</dt>
+              <dd>
+                <ul className="service-facts__hours">
+                  {STORE.hours.map((h) => (
+                    <li key={h.label}><span>{h.label}</span> <span>{hoursText(h)}</span></li>
+                  ))}
+                </ul>
+                <OpenStatus className="service-facts__status" />
+              </dd>
+            </div>
+            <div className="service-facts__item">
+              <dt><span className="service-facts__icon" aria-hidden="true"><Icon name="delivery" size={18} /></span> Delivery</dt>
+              <dd>Doorstep delivery {STORE.delivery.radius}. {STORE.delivery.note}</dd>
+            </div>
+            <div className="service-facts__item">
+              <dt><span className="service-facts__icon" aria-hidden="true"><Icon name="shield" size={18} /></span> Exchanges</dt>
+              <dd>Items delivered damaged, expired or not as ordered are exchanged. Please check your order at delivery and tell us the same day.</dd>
+            </div>
+          </dl>
         </div>
       </ParticleSection>
 
-      {/* Ordering — capsule */}
+      {/* How to order — particles form a capsule */}
       <ParticleSection preset="order" id="order" className="split section--dark" aria-labelledby="order-title">
         <div className="container split__inner">
-          <div className="split__copy glass-panel">
-            <p className="eyebrow">How to order</p>
-            <h2 id="order-title" className="section-title">Three simple steps</h2>
-            <ol className="steps">
-              <li><p><strong>Send your list or prescription</strong> on WhatsApp, by phone, or add items to your cart.</p></li>
-              <li><p><strong>We confirm</strong> availability and the final price with you.</p></li>
-              <li><p><strong>Pick up or get it delivered</strong> {STORE.delivery.radius}.</p></li>
+          <div className="split__copy order">
+            <p className="eyebrow"><span className="eyebrow__dot" aria-hidden="true" />How to order</p>
+            <h2 id="order-title" className="order__title">Three simple steps</h2>
+            <ol className="order-steps">
+              <li>
+                <span className="order-steps__num" aria-hidden="true">1</span>
+                <div>
+                  <h3>Send your list or prescription</h3>
+                  <p>Message us on WhatsApp, call the store, or add items to your cart here.</p>
+                  <ul className="order-steps__channels" aria-label="Ways to send your order">
+                    <li><Icon name="whatsapp" size={14} /> WhatsApp</li>
+                    <li><Icon name="phone" size={14} /> Phone</li>
+                    <li><Icon name="cart" size={14} /> Online cart</li>
+                  </ul>
+                </div>
+              </li>
+              <li>
+                <span className="order-steps__num" aria-hidden="true">2</span>
+                <div>
+                  <h3>We confirm availability and price</h3>
+                  <p>We check stock and share the final price with you before your order is packed.</p>
+                </div>
+              </li>
+              <li>
+                <span className="order-steps__num" aria-hidden="true">3</span>
+                <div>
+                  <h3>Pick up or get it delivered</h3>
+                  <p>Collect it from the counter, or get doorstep delivery {STORE.delivery.radius}.</p>
+                </div>
+              </li>
             </ol>
-            <div className="hero__ctas">
+            <div className="order__ctas">
               <a className="btn btn--primary" href={whatsappLink('Hello, I would like to place an order.')} target="_blank" rel="noopener noreferrer">
                 <Icon name="whatsapp" size={18} /> Start on WhatsApp
               </a>
               <button
                 type="button"
-                className="btn btn--glass"
+                className="btn btn--soft"
                 onClick={() => setRxModalOpen(true)}
               >
                 <Icon name="rx" size={18} /> Upload prescription
               </button>
-              <a className="btn btn--glass" href={STORE.phoneHref}>
-                <Icon name="phone" size={18} /> {STORE.phoneDisplay}
-              </a>
             </div>
+            <p className="order__call">
+              Prefer to talk?{' '}
+              <a href={STORE.phoneHref}><Icon name="phone" size={16} /> Call {STORE.phoneDisplay}</a>
+            </p>
+            <p className="order__tip">
+              <Icon name="info" size={16} />
+              <span><strong>Keep handy:</strong> a clear photo of the prescription, the patient&rsquo;s name and your delivery address.</span>
+            </p>
             <p className="split__note">
               Questions about prescriptions, delivery or payment?{' '}
               <a

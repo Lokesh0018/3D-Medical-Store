@@ -485,6 +485,159 @@ function sphere(count, rand) {
   return normalize(out, PARTICLE_CONFIG.shapeSize.sphere)
 }
 
+/**
+ * Delivery van in side profile, driving toward +x: an extruded cargo box and
+ * a cab with a sloped windshield, two wheels per side, a medical cross on the
+ * cargo panel (the pharmacy's mark) and short speed lines trailing behind.
+ * Faces are sparse fills; box edges, cab outline, window, wheels and cross
+ * carry most particles (high accent), so the silhouette reads crisply even
+ * while the shape gently sways.
+ */
+function truck(count, rand) {
+  const D = 0.62 // half depth (body width)
+  const GROUND = -0.55 // underside of the body
+  // Cargo box: x0..x1, y0..y1.
+  const box = { x0: -2.0, x1: 0.55, y0: GROUND, y1: 1.2 }
+  // Cab outline (counter-clockwise), with a sloped windshield at the front.
+  const cab = [[0.55, GROUND], [1.75, GROUND], [1.75, 0.12], [1.42, 0.68], [0.55, 0.68]]
+  const windowPoly = [[0.72, 0.12], [1.5, 0.12], [1.3, 0.52], [0.72, 0.52]]
+  const wheels = [-1.25, 1.12] // axle x positions
+  const WHEEL_R = 0.36
+  const WHEEL_Y = GROUND - 0.06
+
+  const inPoly = (poly, x, y) => {
+    let inside = false
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i]
+      const [xj, yj] = poly[j]
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside
+    }
+    return inside
+  }
+  const onPoly = (poly) => {
+    const lens = poly.map((p, i) => Math.hypot(poly[(i + 1) % poly.length][0] - p[0], poly[(i + 1) % poly.length][1] - p[1]))
+    let t = rand() * lens.reduce((a, b) => a + b, 0)
+    let i = 0
+    while (t > lens[i] && i < lens.length - 1) t -= lens[i++]
+    const p = poly[i]
+    const q = poly[(i + 1) % poly.length]
+    const f = t / lens[i]
+    return [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]
+  }
+  const boxPoly = [[box.x0, box.y0], [box.x1, box.y0], [box.x1, box.y1], [box.x0, box.y1]]
+  const side = () => (rand() < 0.62 ? D : -D) // favour the side facing the viewer
+
+  // Medical cross on the cargo panel.
+  const CX = -0.72
+  const CY = 0.33
+  const CA = 0.42 // half arm length
+  const CW = 0.14 // half arm width
+  const inCross = (x, y) =>
+    (Math.abs(x - CX) <= CW && Math.abs(y - CY) <= CA) || (Math.abs(y - CY) <= CW && Math.abs(x - CX) <= CA)
+
+  const out = new Float32Array(count * 4)
+  for (let i = 0; i < count; i++) {
+    const r = rand()
+    let x, y, z, accent
+    if (r < 0.16) {
+      // Cargo box side panels (sparse fill).
+      x = box.x0 + rand() * (box.x1 - box.x0)
+      y = box.y0 + rand() * (box.y1 - box.y0)
+      z = side()
+      accent = 0.08
+    } else if (r < 0.3) {
+      // Cargo box edges: both side outlines plus the depth edges at corners.
+      if (rand() < 0.72) {
+        ;[x, y] = onPoly(boxPoly)
+        z = side()
+      } else {
+        ;[x, y] = boxPoly[Math.floor(rand() * 4)]
+        z = (rand() * 2 - 1) * D
+      }
+      accent = 0.65
+    } else if (r < 0.37) {
+      // Cargo roof and rear door panels, for volume.
+      if (rand() < 0.6) {
+        x = box.x0 + rand() * (box.x1 - box.x0)
+        y = box.y1
+      } else {
+        x = box.x0
+        y = box.y0 + rand() * (box.y1 - box.y0)
+      }
+      z = (rand() * 2 - 1) * D
+      accent = 0.2
+    } else if (r < 0.44) {
+      // Cab side panels (sparse fill, window left open).
+      do {
+        x = 0.55 + rand() * 1.2
+        y = GROUND + rand() * 1.23
+      } while (!inPoly(cab, x, y) || inPoly(windowPoly, x, y))
+      z = side()
+      accent = 0.08
+    } else if (r < 0.54) {
+      // Cab outline, plus its depth edges and the windshield/hood surfaces.
+      const k = rand()
+      if (k < 0.6) {
+        ;[x, y] = onPoly(cab)
+        z = side()
+      } else if (k < 0.8) {
+        ;[x, y] = cab[1 + Math.floor(rand() * 4)]
+        z = (rand() * 2 - 1) * D
+      } else {
+        // Windshield surface across the width.
+        const f = rand()
+        x = 1.75 - 0.33 * f
+        y = 0.12 + 0.56 * f
+        z = (rand() * 2 - 1) * D
+      }
+      accent = 0.65
+    } else if (r < 0.59) {
+      // Side window frame.
+      ;[x, y] = onPoly(windowPoly)
+      z = side()
+      accent = 0.9
+    } else if (r < 0.67) {
+      // Medical cross on the cargo panel, raised slightly off the surface.
+      do {
+        x = CX + (rand() * 2 - 1) * CA
+        y = CY + (rand() * 2 - 1) * CA
+      } while (!inCross(x, y))
+      z = side() * 1.03
+      accent = 1
+    } else if (r < 0.86) {
+      // Wheels: tyre ring (dense) and hub, on both sides.
+      const wx = wheels[rand() < 0.5 ? 0 : 1]
+      const a = rand() * TAU
+      const hub = rand() < 0.25
+      const rr = hub ? WHEEL_R * 0.38 : WHEEL_R * (0.86 + rand() * 0.14)
+      x = wx + Math.cos(a) * rr
+      y = WHEEL_Y + Math.sin(a) * rr
+      z = side() * 1.04 + (hub ? 0 : (rand() * 2 - 1) * 0.08)
+      accent = hub ? 1 : 0.8
+    } else if (r < 0.93) {
+      // Speed lines trailing the van: three dashed strokes behind the box.
+      const lane = Math.floor(rand() * 3)
+      const ly = [0.92, 0.36, -0.2][lane]
+      const len = [0.7, 1.0, 0.55][lane]
+      x = box.x0 - 0.25 - rand() * len
+      y = ly + gauss(rand) * 0.012
+      z = gauss(rand) * 0.05
+      accent = 0.45
+    } else {
+      // Sparse interior volume.
+      x = box.x0 + rand() * (1.75 - box.x0)
+      y = GROUND + rand() * (x < box.x1 ? box.y1 - GROUND : 1.2)
+      if (x >= box.x1 && !inPoly(cab, x, y)) y = GROUND + rand() * 0.6
+      z = (rand() * 2 - 1) * D * 0.8
+      accent = 0
+    }
+    write(out, i, x + gauss(rand) * 0.008, y + gauss(rand) * 0.008, z + gauss(rand) * 0.008, accent)
+  }
+  // A slight three-quarter turn so depth reads, while the profile stays clear.
+  rotateX(out, 0.12)
+  return normalize(out, PARTICLE_CONFIG.shapeSize.truck)
+}
+
 /** Low-density ambient field spread across and behind the viewport. */
 function field(count, rand) {
   const out = new Float32Array(count * 4)
@@ -500,8 +653,8 @@ function field(count, rand) {
   return out
 }
 
-const GENERATORS = { cloud, cross, dna, molecule, heartbeat, capsule, sphere, field }
-const SEEDS = { cloud: 11, cross: 23, dna: 37, molecule: 41, heartbeat: 53, capsule: 67, sphere: 79, field: 83 }
+const GENERATORS = { cloud, cross, dna, molecule, heartbeat, capsule, truck, sphere, field }
+const SEEDS = { cloud: 11, cross: 23, dna: 37, molecule: 41, heartbeat: 53, capsule: 67, truck: 71, sphere: 79, field: 83 }
 
 export const SHAPE_NAMES = Object.keys(GENERATORS)
 

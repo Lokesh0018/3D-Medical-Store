@@ -90,6 +90,17 @@ export class ParticleScrollController {
     this.triggers = this.sections.slice(1).map((el) =>
       ScrollTrigger.create({ trigger: el, start, end }),
     )
+
+    // Fade out particles completely when leaving the last particle section (How to order)
+    const lastSection = this.sections[this.sections.length - 1]
+    if (lastSection) {
+      this.exitTrigger = ScrollTrigger.create({
+        trigger: lastSection,
+        start: 'bottom 80%',
+        end: 'bottom 20%',
+      })
+    }
+
     ScrollTrigger.refresh()
     this.version++
     this.listeners.forEach((fn) => fn(this))
@@ -102,6 +113,12 @@ export class ParticleScrollController {
     return s
   }
 
+  /** 1.0 -> 0.0 fade multiplier when scrolling past the last particle section */
+  getExitFade() {
+    if (!this.exitTrigger) return 1
+    return 1 - this.exitTrigger.progress
+  }
+
   subscribe(fn) {
     this.listeners.add(fn)
     return () => this.listeners.delete(fn)
@@ -110,6 +127,10 @@ export class ParticleScrollController {
   #killTriggers() {
     this.triggers.forEach((t) => t.kill())
     this.triggers = []
+    if (this.exitTrigger) {
+      this.exitTrigger.kill()
+      this.exitTrigger = null
+    }
   }
 
   destroy() {

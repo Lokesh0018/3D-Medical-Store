@@ -35,6 +35,7 @@ export const PARTICLE_CONFIG = {
     molecule: 4.6,
     heartbeat: 7.4,
     capsule: 4.8,
+    truck: 5.4,
     sphere: 4.2,
   },
 
@@ -143,8 +144,10 @@ export const SECTION_PRESETS = {
     mobile: { y: 0.08, scale: 0.46, opacity: 0.6 },
   },
   order: {
-    shape: 'capsule', x: 0.22, y: 0, scale: 0.8, opacity: 0.95, sway: 0.4, palette: 'cyan',
-    mobile: { x: 0, y: 0.22, scale: 0.55, opacity: 0.4 },
+    // Delivery van: the order section ends in delivery. Gentler sway than
+    // other shapes so the side profile stays readable.
+    shape: 'truck', x: 0.24, y: 0.02, scale: 0.85, opacity: 0.95, sway: 0.22, palette: 'cyan',
+    mobile: { x: 0, y: 0.24, scale: 0.5, opacity: 0.4 },
   },
   footer: {
     shape: 'field', x: 0, y: 0, scale: 1, opacity: 0.32, sway: 0.08, palette: 'dim',
