@@ -3,7 +3,7 @@
   padding-top: clamp(72px, 10vw, 120px);
   padding-bottom: 32px;
   /* Subtle scrim so the ambient field never competes with footer text. */
-  background: linear-gradient(180deg, transparent, rgba(5, 13, 26, 0.75) 40%);
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.75) 40%);
 }
 
 .site-footer__grid {
@@ -30,7 +30,7 @@
   gap: 8px;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #a7f3d0;
+  color: #166534;
   background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.2);
   padding: 4px 10px;
@@ -38,14 +38,14 @@
   width: fit-content;
 }
 .footer-trust-tag svg {
-  color: #34d399;
+  color: #16a34a;
 }
 
 .site-footer__heading {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--cyan);
+  color: var(--green);
   margin-bottom: 16px;
 }
 .site-footer__list {

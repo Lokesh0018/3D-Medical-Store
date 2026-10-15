@@ -9,7 +9,7 @@
   font-weight: 600;
   white-space: nowrap;
   border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(21, 128, 61, 0.05);
   color: var(--muted);
 }
 .open-status__dot {
@@ -19,9 +19,9 @@
   background: currentColor;
   flex-shrink: 0;
 }
-.open-status.is-open { color: #5ff0b0; border-color: rgba(95, 240, 176, 0.35); }
-.open-status.is-open .open-status__dot { box-shadow: 0 0 0 4px rgba(95, 240, 176, 0.18); }
-.open-status.is-closed { color: #ffb4a8; border-color: rgba(255, 180, 168, 0.35); }
+.open-status.is-open { color: #15803d; border-color: rgba(22, 163, 74, 0.35); }
+.open-status.is-open .open-status__dot { box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18); }
+.open-status.is-closed { color: #b42318; border-color: rgba(180, 35, 24, 0.35); }
 .open-status.is-pending { visibility: hidden; }
 
 /* On light surfaces */

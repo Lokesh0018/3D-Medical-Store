@@ -13,7 +13,7 @@
   backdrop-filter: blur(20px) saturate(140%);
 }
 .cart-drawer::backdrop {
-  background: rgba(2, 8, 18, 0.55);
+  background: rgba(15, 31, 23, 0.45);
 }
 .cart-drawer[open] { animation: cart-in 0.28s ease; }
 @keyframes cart-in { from { transform: translateX(24px); opacity: 0; } }
@@ -81,7 +81,7 @@
   background: transparent;
   cursor: pointer;
 }
-.qty button:hover { background: rgba(255, 255, 255, 0.08); }
+.qty button:hover { background: rgba(21, 128, 61, 0.08); }
 .qty span { min-width: 22px; text-align: center; font-weight: 600; }
 
 .cart-drawer__head-title {
@@ -92,18 +92,18 @@
 .cart-drawer__step-indicator {
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--cyan);
-  background: rgba(47, 224, 212, 0.12);
+  color: var(--green);
+  background: rgba(22, 163, 74, 0.12);
   padding: 2px 8px;
   border-radius: 6px;
 }
 
 .cart-drawer__delivery-perk {
   padding: 10px 24px;
-  background: rgba(47, 224, 212, 0.08);
+  background: rgba(22, 163, 74, 0.08);
   border-bottom: 1px solid var(--glass-border);
   font-size: 0.82rem;
-  color: #a7f3d0;
+  color: #166534;
 }
 .cart-drawer__delivery-perk span {
   display: flex;
@@ -118,7 +118,7 @@
 }
 .cart-line__salt {
   font-size: 0.72rem;
-  color: var(--cyan);
+  color: var(--green);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -138,7 +138,7 @@
   color: var(--muted);
 }
 .text-free {
-  color: #4ade80;
+  color: #15803d;
   font-weight: 700;
 }
 
@@ -181,7 +181,7 @@
 .cart-drawer__checkout-summary {
   margin-top: 12px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(21, 128, 61, 0.04);
   border: 1px solid var(--glass-border);
   border-radius: 10px;
 }
@@ -204,7 +204,7 @@
   display: flex;
   gap: 8px;
   font-size: 0.85rem;
-  color: #ffd2b0;
+  color: #9a3412;
 }
 .cart-drawer__note svg { flex-shrink: 0; margin-top: 3px; }
 .cart-drawer__total {
@@ -214,5 +214,5 @@
   font-size: 1.05rem;
   padding-top: 4px;
 }
-.cart-drawer__total strong { font-size: 1.35rem; color: var(--cyan); }
+.cart-drawer__total strong { font-size: 1.35rem; color: var(--green); }
 

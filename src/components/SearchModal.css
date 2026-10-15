@@ -6,12 +6,12 @@
   background: var(--card);
   color: var(--ink);
   width: min(640px, 94vw);
-  box-shadow: 0 25px 50px -12px rgba(6, 24, 44, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(15, 31, 23, 0.4);
   overflow: hidden;
 }
 
 .search-modal::backdrop {
-  background: rgba(4, 12, 24, 0.65);
+  background: rgba(15, 31, 23, 0.45);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 }
@@ -31,7 +31,7 @@
 }
 
 .search-modal__icon {
-  color: var(--teal-ink);
+  color: var(--green-ink);
   flex-shrink: 0;
 }
 
@@ -129,7 +129,7 @@
 .search-result-item__salt {
   display: block;
   font-size: 0.75rem;
-  color: #0f766e;
+  color: #15803d;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -193,11 +193,11 @@
   align-items: flex-start;
   gap: 8px;
   padding: 10px 14px;
-  background: #f0fdfa;
-  border: 1px solid #ccfbf1;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
   border-radius: 8px;
   font-size: 0.8rem;
-  color: #0f766e;
+  color: #15803d;
 }
 .search-modal__tip svg {
   flex-shrink: 0;

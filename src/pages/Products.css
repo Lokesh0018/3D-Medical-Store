@@ -23,8 +23,8 @@
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
-.catalog-search input::placeholder { color: #8ea4bc; }
-.catalog-search input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.catalog-search input::placeholder { color: #6b7f74; }
+.catalog-search input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 
 .catalog-search__clear {
   position: absolute;
@@ -40,7 +40,7 @@
 }
 .catalog-search__clear:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(21, 128, 61, 0.1);
 }
 
 .chips {
@@ -54,17 +54,17 @@
   padding: 6px 16px;
   border-radius: 999px;
   border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(21, 128, 61, 0.04);
   color: var(--muted);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-.chip:hover { color: var(--text); border-color: rgba(47, 224, 212, 0.4); }
+.chip:hover { color: var(--text); border-color: rgba(22, 163, 74, 0.4); }
 .chip.is-active {
-  background: rgba(47, 224, 212, 0.16);
-  border-color: rgba(47, 224, 212, 0.6);
+  background: rgba(22, 163, 74, 0.16);
+  border-color: rgba(22, 163, 74, 0.6);
   color: var(--text);
 }
 
@@ -99,7 +99,7 @@
   user-select: none;
 }
 .filter-checkbox input[type="checkbox"] {
-  accent-color: var(--teal-ink);
+  accent-color: var(--green-ink);
   width: 18px;
   height: 18px;
   cursor: pointer;
@@ -153,7 +153,7 @@
   cursor: pointer;
 }
 .catalog__sort-select:focus-visible {
-  outline: 2px solid var(--teal-ink);
+  outline: 2px solid var(--green-ink);
 }
 
 .catalog__status-row {

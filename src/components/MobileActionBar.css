@@ -11,7 +11,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
-    background: rgba(5, 13, 26, 0.9);
+    background: rgba(255, 255, 255, 0.9);
     border-top: 1px solid var(--glass-border);
     -webkit-backdrop-filter: blur(16px) saturate(140%);
     backdrop-filter: blur(16px) saturate(140%);
@@ -37,8 +37,8 @@
   .mobile-actions a:hover,
   .mobile-actions button:hover,
   .mobile-actions a:active,
-  .mobile-actions button:active { color: var(--text); background: rgba(255, 255, 255, 0.06); }
-  .mobile-actions svg { color: var(--cyan); }
+  .mobile-actions button:active { color: var(--text); background: rgba(21, 128, 61, 0.06); }
+  .mobile-actions svg { color: var(--green); }
   .mobile-actions__cart { position: relative; display: inline-flex; }
   .mobile-actions__badge {
     position: absolute;
@@ -46,8 +46,8 @@
     min-width: 18px; height: 18px;
     padding: 0 4px;
     border-radius: 999px;
-    background: var(--cyan);
-    color: #031421;
+    background: var(--green);
+    color: #ffffff;
     font-size: 0.68rem;
     font-weight: 700;
     display: grid;

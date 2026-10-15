@@ -1,4 +1,4 @@
-import { AdditiveBlending, Color, ShaderMaterial } from 'three'
+import { Color, NormalBlending, ShaderMaterial } from 'three'
 
 /**
  * Particle morph shader.
@@ -14,8 +14,8 @@ import { AdditiveBlending, Color, ShaderMaterial } from 'three'
  *     zero at p = 0 and p = 1, so segment boundaries are seamless.
  *  3. Idle turbulence — a cheap sum-of-sines flow keeps formed shapes alive
  *     with sub-pixel drift (scaled by uTurbulence).
- *  4. Soft point sprites with additive blending give a restrained glow
- *     without any post-processing pass.
+ *  4. Soft point sprites with normal alpha blending read as
+ *     tinted dots on the light page, without any post-processing pass.
  */
 const vertexShader = /* glsl */ `
   attribute vec4 aFrom;   // xyz target A + accent
@@ -66,7 +66,7 @@ const vertexShader = /* glsl */ `
 
     float accent = mix(aFrom.w, aTo.w, e);
     vec3 base = mix(uColorA, uColorB, aRand.w);
-    vColor = mix(base, uAccent, accent * 0.7) * (1.0 + flight * 0.25);
+    vColor = mix(base, uAccent, accent * 0.7);
 
     // Gentle twinkle (never below 80%) and depth fade keep motion calm.
     float twinkle = 0.8 + 0.2 * sin(uTime * 1.3 + phase);
@@ -84,8 +84,8 @@ const fragmentShader = /* glsl */ `
     float glow = smoothstep(0.5, 0.0, d);
     glow *= glow;
     if (glow < 0.01) discard;
-    // Additive blending: premultiply so overlaps brighten, never go opaque.
-    gl_FragColor = vec4(vColor * glow * vAlpha, 1.0);
+    // Normal blending: an additive glow would vanish against the white page.
+    gl_FragColor = vec4(vColor, glow * vAlpha);
   }
 `
 
@@ -96,7 +96,7 @@ export function createParticleMaterial({ size, pixelRatio }) {
     transparent: true,
     depthWrite: false,
     depthTest: false,
-    blending: AdditiveBlending,
+    blending: NormalBlending,
     uniforms: {
       uProgress: { value: 0 },
       uStagger: { value: 0.4 },

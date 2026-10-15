@@ -9,11 +9,11 @@
 // from; `accent` highlights structural features (cross rim, DNA base pairs,
 // oxygen atoms, ECG peaks, capsule half).
 export const PALETTES = {
-  cyan: { a: '#2fe0d4', b: '#4aa8ff', accent: '#e8fffd' },
-  teal: { a: '#19c3b1', b: '#5fe6ff', accent: '#c9fff6' },
-  blue: { a: '#3d8bff', b: '#38e1e1', accent: '#e4f1ff' },
-  pulse: { a: '#24d6c8', b: '#6fb6ff', accent: '#ffffff' },
-  dim: { a: '#1f8fa8', b: '#2b5f9e', accent: '#7fd8ff' },
+  cyan: { a: '#16a34a', b: '#0d9488', accent: '#14532d' },
+  teal: { a: '#22c55e', b: '#059669', accent: '#166534' },
+  blue: { a: '#10b981', b: '#15803d', accent: '#064e3b' },
+  pulse: { a: '#16a34a', b: '#34d399', accent: '#14532d' },
+  dim: { a: '#86efac', b: '#6ee7b7', accent: '#4ade80' },
 }
 
 export const PARTICLE_CONFIG = {

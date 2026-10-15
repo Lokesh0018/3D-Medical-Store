@@ -7,12 +7,12 @@
   color: var(--ink);
   width: min(820px, 92vw);
   max-height: 90vh;
-  box-shadow: 0 24px 60px -12px rgba(6, 24, 44, 0.35);
+  box-shadow: 0 24px 60px -12px rgba(15, 31, 23, 0.35);
   overflow: hidden;
 }
 
 .quick-view-dialog::backdrop {
-  background: rgba(4, 12, 24, 0.7);
+  background: rgba(15, 31, 23, 0.45);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -85,7 +85,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--teal-ink);
+  color: var(--green-ink);
 }
 
 .quick-view-title {
@@ -137,7 +137,7 @@
   margin-bottom: 4px;
 }
 .quick-view-label svg {
-  color: var(--teal-ink);
+  color: var(--green-ink);
 }
 
 .quick-view-value {

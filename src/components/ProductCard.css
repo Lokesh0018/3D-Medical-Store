@@ -9,8 +9,8 @@
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .product-card:hover {
-  border-color: #b9d6e3;
-  box-shadow: 0 18px 40px -24px rgba(6, 60, 90, 0.35);
+  border-color: #bbe5c8;
+  box-shadow: 0 18px 40px -24px rgba(21, 83, 45, 0.22);
 }
 
 .product-art {
@@ -18,10 +18,10 @@
   overflow: hidden;
   display: grid;
   place-items: center;
-  color: var(--teal-ink);
+  color: var(--green-ink);
   background:
     radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.9), transparent 60%),
-    linear-gradient(135deg, #dff6f4, #e3efff);
+    linear-gradient(135deg, #e7f8ec, #f0fdf4);
 }
 .product-art--devices { background: radial-gradient(circle at 30% 20%, #fff, transparent 60%), linear-gradient(135deg, #e3efff, #e6e9ff); color: #2747a8; }
 .product-art--wellness { background: radial-gradient(circle at 30% 20%, #fff, transparent 60%), linear-gradient(135deg, #e6f7e8, #dff6f4); color: #1d7a3e; }
@@ -41,7 +41,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--teal-ink);
+  color: var(--green-ink);
 }
 .product-card__name { font-size: 1.08rem; font-weight: 700; }
 .product-card__pack { color: var(--ink-2); font-size: 0.9rem; }
@@ -56,7 +56,7 @@
 }
 
 .product-card__name a { color: inherit; text-decoration: none; }
-.product-card__name a:hover { color: var(--teal-ink); text-decoration: underline; }
+.product-card__name a:hover { color: var(--green-ink); text-decoration: underline; }
 .product-card__art-link { display: block; width: 100%; height: 100%; }
 
 .product-card__media-wrap {
@@ -92,7 +92,7 @@
 }
 .product-card__quick-btn:hover {
   background: var(--paper);
-  color: var(--teal-ink);
+  color: var(--green-ink);
 }
 
 .product-card__meta {
@@ -104,8 +104,8 @@
 .product-card__sub-hint {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #0f766e;
-  background: #ccfbf1;
+  color: #15803d;
+  background: #dcfce7;
   padding: 2px 7px;
   border-radius: 6px;
 }
@@ -126,7 +126,7 @@
   display: inline-block;
   vertical-align: -2px;
   margin-right: 3px;
-  color: var(--teal-ink);
+  color: var(--green-ink);
 }
 
 .product-art img { width: 100%; height: 100%; object-fit: cover; }
