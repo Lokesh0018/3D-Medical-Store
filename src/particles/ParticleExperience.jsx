@@ -45,15 +45,31 @@ export default function ParticleExperience({ routeKey }) {
   }, [])
 
   // Capability checks run client-side only (keeps pre-rendered HTML stable).
-  // Fetch the 3D chunk immediately rather than waiting for browser idle time.
+  // Defer heavy 3D WebGL chunk download until after initial DOM paint and idle time.
   useEffect(() => {
     if (userDisabled || !supportsWebGL() || prefersLightweight()) return
     let cancelled = false
-    loadCanvas().then(
-      () => !cancelled && setLoaded(true),
-      () => !cancelled && setFailed(true),
-    )
-    return () => { cancelled = true }
+
+    const scheduleLoad = () => {
+      loadCanvas().then(
+        () => !cancelled && setLoaded(true),
+        () => !cancelled && setFailed(true),
+      )
+    }
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(scheduleLoad, { timeout: 1500 })
+      return () => {
+        cancelled = true
+        window.cancelIdleCallback(id)
+      }
+    } else {
+      const t = setTimeout(scheduleLoad, 250)
+      return () => {
+        cancelled = true
+        clearTimeout(t)
+      }
+    }
   }, [userDisabled])
 
   const showCanvas = loaded && !userDisabled && !failed

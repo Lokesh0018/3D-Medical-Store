@@ -4,7 +4,7 @@ import { STORE } from '../data/store.js'
  * Single-page title/description. Shared by the runtime hook (usePageMeta) and
  * the build-time pre-renderer.
  */
-export function metaFor(pathname) {
+export function metaFor(_pathname) {
   return {
     title: `${STORE.name} — Genuine Medicines & Home Delivery`,
     fullTitle: true,

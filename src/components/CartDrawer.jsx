@@ -6,17 +6,6 @@ import Icon from './Icon.jsx'
 import DeliveryCountdown from './DeliveryCountdown.jsx'
 import './CartDrawer.css'
 
-function orderMessage(lines, total, hasRx) {
-  const rows = lines.map((l) => `• ${l.product.name} (${l.product.pack}) × ${l.qty} — ${formatPrice(l.qty * l.product.price)}`)
-  return [
-    `Hello ${STORE.name}, I'd like to place an order:`,
-    ...rows,
-    `Estimated total: ${formatPrice(total)}`,
-    hasRx ? 'My order includes prescription items — I will share the prescription.' : '',
-    'Name:',
-    'Delivery address / pickup:',
-  ].filter(Boolean).join('\n')
-}
 
 /**
  * Cart drawer on the native <dialog> element: showModal() provides focus

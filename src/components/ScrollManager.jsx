@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 /**
@@ -7,9 +7,6 @@ import { useLocation } from 'react-router-dom'
  */
 export default function ScrollManager() {
   const { pathname, hash } = useLocation()
-  // Only reset scroll when the path actually changes, so a refresh keeps the
-  // browser-restored position (and StrictMode re-runs are no-ops).
-  const prevPath = useRef(pathname)
 
   useLayoutEffect(() => {
     // Disable browser's automatic scroll restoration on refresh so page starts at top

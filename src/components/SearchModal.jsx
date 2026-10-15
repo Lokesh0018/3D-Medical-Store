@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Icon from './Icon.jsx'
 import { PriceTag, ProductArt } from './ProductBits.jsx'
-import { CATEGORIES, PRODUCTS, categoryName, productPath } from '../data/products.js'
+import { CATEGORIES, PRODUCTS, productPath } from '../data/products.js'
 import './SearchModal.css'
 
 export default function SearchModal({ isOpen, onClose }) {
