@@ -146,12 +146,18 @@ export const SECTION_PRESETS = {
   order: {
     // Delivery van: the order section ends in delivery. Gentler sway than
     // other shapes so the side profile stays readable.
-    shape: 'truck', x: 0.24, y: 0.02, scale: 0.85, opacity: 0.95, sway: 0.22, palette: 'cyan',
+    shape: 'truck', x: 0.22, y: 0.02, scale: 0.76, opacity: 0.95, sway: 0.22, palette: 'cyan',
     mobile: { x: 0, y: 0.24, scale: 0.5, opacity: 0.4 },
   },
   footer: {
     shape: 'field', x: 0, y: 0, scale: 1, opacity: 0.32, sway: 0.08, palette: 'dim',
     mobile: { opacity: 0.25 },
+  },
+  // FAQ: the delivery truck becomes a capsule (tablet), to the right of the
+  // questions. Faint on phones, where it sits behind long answers.
+  faq: {
+    shape: 'capsule', x: 0.27, y: 0, scale: 0.72, opacity: 0.9, sway: 0.35, palette: 'teal',
+    mobile: { x: 0.24, y: 0.28, scale: 0.4, opacity: 0.22 },
   },
   productsHero: {
     shape: 'capsule', x: 0.27, y: 0.12, scale: 0.6, opacity: 0.9, sway: 0.4, palette: 'teal',

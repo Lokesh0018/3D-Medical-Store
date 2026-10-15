@@ -525,7 +525,7 @@ function truck(count, rand) {
     return [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]
   }
   const boxPoly = [[box.x0, box.y0], [box.x1, box.y0], [box.x1, box.y1], [box.x0, box.y1]]
-  const side = () => (rand() < 0.62 ? D : -D) // favour the side facing the viewer
+  const side = () => (rand() < 0.78 ? D : -D) // favour the side facing the viewer
 
   // Medical cross on the cargo panel.
   const CX = -0.72
@@ -539,13 +539,13 @@ function truck(count, rand) {
   for (let i = 0; i < count; i++) {
     const r = rand()
     let x, y, z, accent
-    if (r < 0.16) {
+    if (r < 0.1) {
       // Cargo box side panels (sparse fill).
       x = box.x0 + rand() * (box.x1 - box.x0)
       y = box.y0 + rand() * (box.y1 - box.y0)
       z = side()
       accent = 0.08
-    } else if (r < 0.3) {
+    } else if (r < 0.25) {
       // Cargo box edges: both side outlines plus the depth edges at corners.
       if (rand() < 0.72) {
         ;[x, y] = onPoly(boxPoly)
@@ -555,7 +555,7 @@ function truck(count, rand) {
         z = (rand() * 2 - 1) * D
       }
       accent = 0.65
-    } else if (r < 0.37) {
+    } else if (r < 0.31) {
       // Cargo roof and rear door panels, for volume.
       if (rand() < 0.6) {
         x = box.x0 + rand() * (box.x1 - box.x0)
@@ -566,7 +566,7 @@ function truck(count, rand) {
       }
       z = (rand() * 2 - 1) * D
       accent = 0.2
-    } else if (r < 0.44) {
+    } else if (r < 0.36) {
       // Cab side panels (sparse fill, window left open).
       do {
         x = 0.55 + rand() * 1.2
@@ -574,7 +574,7 @@ function truck(count, rand) {
       } while (!inPoly(cab, x, y) || inPoly(windowPoly, x, y))
       z = side()
       accent = 0.08
-    } else if (r < 0.54) {
+    } else if (r < 0.47) {
       // Cab outline, plus its depth edges and the windshield/hood surfaces.
       const k = rand()
       if (k < 0.6) {
@@ -591,18 +591,19 @@ function truck(count, rand) {
         z = (rand() * 2 - 1) * D
       }
       accent = 0.65
-    } else if (r < 0.59) {
+    } else if (r < 0.52) {
       // Side window frame.
       ;[x, y] = onPoly(windowPoly)
       z = side()
       accent = 0.9
-    } else if (r < 0.67) {
-      // Medical cross on the cargo panel, raised slightly off the surface.
+    } else if (r < 0.66) {
+      // Medical cross on the cargo panel, raised off the surface on the side
+      // facing the viewer so it reads as the van's livery.
       do {
         x = CX + (rand() * 2 - 1) * CA
         y = CY + (rand() * 2 - 1) * CA
       } while (!inCross(x, y))
-      z = side() * 1.03
+      z = D * 1.04
       accent = 1
     } else if (r < 0.86) {
       // Wheels: tyre ring (dense) and hub, on both sides.

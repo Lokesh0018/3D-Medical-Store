@@ -551,13 +551,28 @@ export default function Home() {
           {/* Controls Bar: Sort, Stock Filter, Rx Type Filter */}
           <div className="catalog__controls-bar">
             <div className="catalog__filters-group">
-              <label className="filter-checkbox">
+              <label className={`filter-checkbox${stockOnly ? ' is-checked' : ''}`}>
                 <input
                   type="checkbox"
+                  className="filter-checkbox__input sr-only"
                   checked={stockOnly}
                   onChange={(e) => setStockOnly(e.target.checked)}
                 />
-                <span>In Stock only</span>
+                <span className="filter-checkbox__box" aria-hidden="true">
+                  <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M1 5L4.5 8.5L11 1.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span className="filter-checkbox__label">
+                  <span className="filter-checkbox__dot" aria-hidden="true" />
+                  In Stock Only
+                </span>
               </label>
 
               <div className="filter-tabs" role="group" aria-label="Prescription requirement">
@@ -995,12 +1010,18 @@ export default function Home() {
             </aside>
           </div>
 
-          {/* Embedded FAQ */}
-          <div className="contact-faq">
+        </div>
+      </section>
+
+      {/* FAQ — plain background; the particles become a capsule on the right */}
+      <ParticleSection preset="faq" id="faq-section" className="split section--dark faq-section" aria-labelledby="faq-title">
+        <div className="container split__inner">
+          <div className="split__copy faq-section__copy">
+            <p className="eyebrow"><span className="eyebrow__dot" aria-hidden="true" />Help &amp; answers</p>
             <Faq />
           </div>
         </div>
-      </section>
+      </ParticleSection>
 
       <StructuredData data={pharmacySchema()} />
 

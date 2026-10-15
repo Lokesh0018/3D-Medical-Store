@@ -1,22 +1,26 @@
+import { useState } from 'react'
 import { CATEGORIES, discountPercent, formatPrice } from '../data/products.js'
 import Icon from './Icon.jsx'
 
 /**
- * Product visual: a real photo when `product.image` is set, otherwise the
+ * Product visual: a real photo when `product.image` is set and valid, otherwise the
  * category illustration. Both keep a fixed aspect ratio (no layout shift).
  */
 export function ProductArt({ product, className = '', eager = false }) {
+  const [imgError, setImgError] = useState(false)
   const icon = CATEGORIES.find((c) => c.id === product.category)?.icon ?? 'pill'
-  if (product.image) {
+
+  if (product.image && !imgError) {
     return (
       <div className={`product-art product-art--photo ${className}`}>
         <img
           src={product.image.src}
-          width={product.image.width}
-          height={product.image.height}
+          width={product.image.width || 600}
+          height={product.image.height || 375}
           alt={product.image.alt ?? product.name}
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
+          onError={() => setImgError(true)}
         />
       </div>
     )

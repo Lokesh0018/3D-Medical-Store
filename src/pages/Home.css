@@ -1190,12 +1190,94 @@
 .filter-checkbox {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
+  gap: 10px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--ink);
   cursor: pointer;
   user-select: none;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 38px;
+}
+.filter-checkbox:hover {
+  border-color: rgba(22, 163, 74, 0.45);
+  background: #f0fdf4;
+  color: var(--green-ink);
+  transform: translateY(-1px);
+}
+.filter-checkbox.is-checked {
+  background: #ecfdf5;
+  border-color: #86efac;
+  color: #14532d;
+  box-shadow: 0 2px 8px -2px rgba(22, 163, 74, 0.2);
+}
+.filter-checkbox:has(.filter-checkbox__input:focus-visible) {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* Custom Checkbox Box */
+.filter-checkbox__box {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+.filter-checkbox:hover .filter-checkbox__box {
+  border-color: var(--green);
+}
+.filter-checkbox.is-checked .filter-checkbox__box {
+  background: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.35);
+  transform: scale(1.05);
+}
+.filter-checkbox__box svg {
+  width: 11px;
+  height: 9px;
+  stroke: #ffffff;
+  opacity: 0;
+  transform: scale(0.6) rotate(-8deg);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.filter-checkbox.is-checked .filter-checkbox__box svg {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+/* Label text & live pulsating stock dot */
+.filter-checkbox__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.filter-checkbox__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #94a3b8;
+  transition: background-color 0.2s ease;
+}
+.filter-checkbox.is-checked .filter-checkbox__dot {
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+  animation: pulse-stock-dot 2s infinite ease-in-out;
+}
+@keyframes pulse-stock-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
 }
 .filter-tabs {
   display: inline-flex;
@@ -1493,10 +1575,26 @@
 }
 .contact-hours__note svg { flex-shrink: 0; color: var(--green-ink); margin-top: 3px; }
 
-.contact-faq {
-  margin-top: clamp(48px, 6vw, 80px);
-  border-top: 1px solid var(--line);
-  padding-top: clamp(40px, 5vw, 64px);
+/* ---------- FAQ (plain background, questions left, capsule right) ---------- */
+.faq-section { padding-block: clamp(88px, 10vw, 136px); }
+.faq-section__copy { max-width: 620px; }
+.faq-section .faq .section-title {
+  font-size: clamp(2rem, 3.6vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin-bottom: 24px;
+}
+@media (max-width: 767px) {
+  /* The capsule sits behind the answers on phones: a soft wash keeps text crisp. */
+  .faq-section__copy { position: relative; }
+  .faq-section__copy::before {
+    content: '';
+    position: absolute;
+    inset: -24px -16px;
+    z-index: -1;
+    background: radial-gradient(ellipse 85% 75% at 40% 50%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6) 70%, transparent);
+    pointer-events: none;
+  }
 }
 
 @media (max-width: 1000px) {
